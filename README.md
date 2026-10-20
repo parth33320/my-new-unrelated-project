@@ -2,7 +2,7 @@
 
 CodePath WEB103 Final Project
 
-Designed and developed by: [Insert Member 1 Name], [Insert Member 2 Name], [Insert Member 3 Name]
+Designed and developed by: Parth Patel, Robert Cunningham, Tasneem Shabana, Hunter Smith, George Liu
 
 🔗 Link to deployed app:
 
