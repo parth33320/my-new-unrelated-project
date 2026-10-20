@@ -96,14 +96,15 @@
 	* **Sequential Counterexample:**
 	  * *Step 1 (Input):* User clicks on their profile link navigation element.
 	  * *Step 2 (Output):* The system displays a generic user profile page that lacks any history list component, forcing the user to manually track their own mistakes.
-* Desc / Explanation: The profile page loading but containing no history list component, leaving the user completely unable to see their personal missed words, highlights a missing feature.
+      * *Desc / Explanation:* The profile page loading but containing no history list component, leaving the user completely unable to see their personal missed words, highlights a missing feature.
+        
 10. As a custom deck creator, I want to create, view, update, and delete my own word decks, so that I can manage custom words in the database table.
 	* **Sequential Example:**
 	  * *Step 1 (Input):* User opens a custom deck creator dashboard, types a word definition entry, and hits "Submit".
 	  * *Step 2 (Output):* The system sends an API request to the backend server, modifies the rows in the database table, and updates the visible deck list component instantly.
-* Desc / Explanation: The custom deck dashboard capturing the input, executing a server-side table insert, and instantly drawing the new card content on the screen confirms that the user can manage persistent data packages via CRUD tools.
+      * *Desc / Explanation:* The custom deck dashboard capturing the input, executing a server-side table insert, and instantly drawing the new card content on the screen confirms that the user can manage persistent data packages via CRUD tools.
 	* **Sequential Counterexample:**
 	  * *Step 1 (Input):* User opens a custom deck creator dashboard, types a word definition entry, and hits "Submit".
 	  * *Step 2 (Output):* The system updates the text on the interface screen but fails to trigger any backend database table request, resulting in changes vanishing upon restarting the app.
-* Desc / Explanation: The interface accepting the text typing but failing to trigger a backend database request, causing all custom deck data to vanish upon a page reload, reveals a broken database pipeline.
+      * *Desc / Explanation:* The interface accepting the text typing but failing to trigger a backend database request, causing all custom deck data to vanish upon a page reload, reveals a broken database pipeline.
 
