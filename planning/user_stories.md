@@ -1,110 +1,318 @@
-# User Stories
+# Tandem — User Stories
 
-## Outline User Roles
+> **How to read this file**
+>
+> Every story is tagged with:
+> - The **rubric category** it contributes to (Baseline Required / Custom Required / Stretch)
+> - The **Final Milestone point value** from the course rubric
+> - The **app feature** it belongs to
+> - The **owner** responsible for implementing it
+>
+> Tags use this format:
+> `[BASELINE — X pts]` · `[CUSTOM — 3 pts]` · `[STRETCH — X pts]`
+>
+> Point values come from the Final Milestone rubric (65 pts baseline + 24 pts custom + 19 pts stretch).
 
-1. `Chinese_Speaker`: A user who knows Chinese characters and wants to guess Japanese words.
-2. `Japanese_Speaker`: A user who knows Japanese characters and wants to guess Chinese words.
-3. `English_Speaker`: A user who knows neither language and acts as a control group player.
+---
 
-## Draft User Stories
+## User Roles
 
-1. As a `Chinese_Speaker`, I want to select the "I know Chinese → guess Japanese" game direction, so that I can test my native character knowledge against Japanese words.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User clicks the main menu button labeled "I know Chinese → guess Japanese".
-     * *Step 2 (Output):* The system records the track selection and loads a quiz question showing a Japanese word.
-     * *Desc / Explanation:* The user selecting "I know Chinese → guess Japanese" and the system successfully loading a corresponding Japanese word card confirms that clicking the specific direction button changes the app state correctly.
-   * **Sequential Counterexample:**
-     * *Step 1 (Input):* User clicks the main menu button labeled "I know Chinese → guess Japanese".
-     * *Step 2 (Output):* The system ignores the click, remains stuck on the main menu, and fails to load the quiz question.
-     * *Desc / Explanation:* The system completely ignoring the click on "I know Chinese → guess Japanese" and leaving the user stuck on the main menu shows a broken track selection workflow.
+| # | Role | Description |
+|---|------|-------------|
+| 1 | **Player** | A language learner who plays quiz rounds to test knowledge of Chinese/Japanese word overlap |
+| 2 | **Registered User** | A logged-in Player who can save progress, build custom decks, and appear on leaderboards |
+| 3 | **Admin** | A developer or content curator who can manage the word database |
 
-2. As a `Japanese_Speaker`, I want to select the "I know Japanese → guess Chinese" game direction, so that I can test my native character knowledge against Chinese words.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User clicks the main menu button labeled "I know Japanese → guess Chinese".
-     * *Step 2 (Output):* The system records the track selection and loads a quiz question showing a Chinese word.
-     * *Desc / Explanation:* The system successfully registering the choice on the "I know Japanese → guess Chinese" button and loading a Chinese target word shows that a Japanese user can launch their customized gameplay mode.
-   * **Sequential Counterexample:**
-     * *Step 1 (Input):* User clicks the main menu button labeled "I know Japanese → guess Chinese".
-     * *Step 2 (Output):* The system ignores the click, remains stuck on the main menu, and fails to load the quiz question.
-     * *Desc / Explanation:* The system failing to change screens after the click and leaving the user trapped on the main menu screen demonstrates a failure that blocks a user from starting their chosen direction track.
+---
 
-3. As a `Chinese_Speaker`, I want to see the multiple-choice options written as English meanings, so that the quiz game remains a challenge and does not give away the answer in Chinese characters.
-   * **Sequential Example:**
-     * *Step 1 (Output):* The system displays the quiz question word **手紙**.
-     * *Step 2 (Output):* The system generates four multiple-choice answer buttons written in English text: "Letter", "Train", "Car", and "Bed".
-     * *Desc / Explanation:* The system displaying choices as English words like "Letter" and "Bed" instead of characters, forcing the player to use actual vocabulary intuition, avoids the design trap of direct shape-matching.
-   * **Sequential Counterexample:**
-     * *Step 1 (Output):* The system displays the quiz question word **手紙**.
-     * *Step 2 (Output):* The system generates multiple-choice answer buttons written in Chinese characters: "手紙" and "汽車", making the answer completely obvious to a Chinese reader.
-     * *Desc / Explanation:* The system listing choices like the actual characters "手紙", allowing the Chinese reader to instantly match the shapes without knowing any Japanese, makes the quiz question completely trivial.
+## Rubric Coverage Summary
 
-4. As a `Japanese_Speaker`, I want to answer quiz questions before a 10-second timer runs out, so that I test my fast instincts.
-   * **Sequential Example:**
-     * *Step 1 (Output):* The system displays a quiz question with a counting timer starting at 10 seconds.
-     * *Step 2 (Input):* User clicks an option at second 6, and the system records the choice successfully.
-     * *Desc / Explanation:* The user inputting an answer selection at second 6 and the system registering the choice within the active 10-second countdown confirms that fast player reactions are captured by the timer.
-   * **Sequential Counterexample:**
-     * *Step 1 (Output):* The system displays a quiz question with a counting timer starting at 10 seconds.
-     * *Step 2 (Input):* User clicks an option at second 6, but the system timer ignores the input and counts down to 0, triggering an incorrect time-out screen.
-     * *Desc / Explanation:* The system ignoring the user's click at second 6, continuing to count down, and firing a false time-out screen at 0 shows a technical failure that incorrectly punishes a fast player.
+| Rubric Category | Item | Points | Covered by Feature(s) |
+|---|---|---|---|
+| **BASELINE** | Express backend + React frontend | 5 | All features |
+| **BASELINE** | One-to-many DB relationship | 8 (shared) | Custom Deck Creator |
+| **BASELINE** | Many-to-many with join table | 8 (shared) | Personal Missed Words History |
+| **BASELINE** | RESTful API (GET/POST/PATCH/DELETE) | 15 | Custom Deck Creator (full CRUD) |
+| **BASELINE** | Reset database to default | 4 | Split Direction Leaderboards |
+| **BASELINE** | At least one redirection | 3 | Final Similarity Meter Dashboard |
+| **BASELINE** | At least one same-page interaction | 3 | Timed Game Loop / Word Reveal Cards |
+| **BASELINE** | Dynamic frontend routes (React Router) | 4 | Game Loop, Results, Deck Dashboard |
+| **BASELINE** | Hierarchical React components | 6 | Custom Deck Creator |
+| **BASELINE** | Dynamic routes frontend + backend | 3 | All features |
+| **BASELINE** | Deployed on Render, all features working | 8 | All features |
+| **CUSTOM** | Slide-out pane or modal | 3 | Dynamic Word Reveal Cards |
+| **CUSTOM** | Filtering and/or sorting | 3 | Split Direction Leaderboards |
+| **CUSTOM** | Data auto-generated on event | 3 | Personal Missed Words History |
+| **CUSTOM** | POST/PATCH data validated before DB update | 3 | Custom Deck Creator |
+| **CUSTOM** | Unique field within join table | 3 | Personal Missed Words History |
+| **CUSTOM** | Graceful error handling | 3 | Error Handling (all features) |
+| **STRETCH** | Login required for subset of pages | 3 | Auth / Protected Routes feature |
+| **STRETCH** | Show spinner while loading | 2 | Loading States feature |
+| **STRETCH** | Disable buttons during form submission | 2 | Loading States feature |
+| **STRETCH** | Toast messages on user events | 3 | Toast Notifications feature |
 
-5. As an `English_Speaker`, I want to play a control group mode, so that I can see if a person who knows neither language can guess the correct answers using visual patterns.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User clicks the button "English Speaker Control Mode".
-     * *Step 2 (Output):* The system sets up a quiz that tracks scores without any character hints, allowing an English baseline score to register on the leaderboards.
-     * *Desc / Explanation:* The system setting a pure control state after the click on "English Speaker Control Mode" to safely measure shape pattern matching allows a non-character reader to participate fairly.
-   * **Sequential Counterexample:**
-     * *Step 1 (Input):* User clicks the button "English Speaker Control Mode".
-     * *Step 2 (Output):* The system crashes or redirects to a standard dual-language screen that assumes the user already reads character forms fluently, ruining the control group experiment.
-     * *Desc / Explanation:* The system breaking or routing to a standard bilingual interface instead of loading the clean "English Speaker Control Mode" shows an error that completely invalidates the control group experiment.
+---
 
-6. As a `Chinese_Speaker`, I want to see a word reveal card after each answer, so that I can compare the word reading and the word meaning in both languages side by side.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User clicks an answer choice button for a question.
-     * *Step 2 (Output):* The system pauses and opens a reveal card showing the complete spelling, readings, and meanings for both Chinese and Japanese simultaneously.
-     * *Desc / Explanation:* The system stopping the loop right after an answer button click and displaying the comparative reveal card component containing readings and meanings allows the user to study vocabulary parameters mid-game.
-   * **Sequential Counterexample:**
-     * *Step 1 (Input):* User clicks an answer choice button for a question.
-     * *Step 2 (Output):* The system immediately jumps straight to the next quiz question without loading any mid-round reveal card component.
-     * *Desc / Explanation:* The system immediately forcing the next quiz question onto the screen, skipping the reveal card completely and depriving the user of any learning data, blocks the user from comparing the vocabulary records.
+---
 
-7. As a `Japanese_Speaker`, I want the word reveal card to show a word relationship tag, so that I know if the word is a true friend, a false friend, or a half friend.
-   * **Sequential Example:**
-     * *Step 1 (Output):* The system opens the word reveal card for the shared word **手紙**.
-     * *Step 2 (Output):* The system renders a red color-coded tag element that reads "Relationship: False Friend" based on database metadata.
-     * *Desc / Explanation:* The card component reading the database row for "**手紙**" and successfully outputting the red "Relationship: False Friend" tag element confirms that the system correctly classifies words for the learner.
-   * **Sequential Counterexample:**
-     * *Step 1 (Output):* The system opens the word reveal card for the shared word **手紙**.
-     * *Step 2 (Output):* The system leaves the relationship area blank, forcing the user to guess if the word meaning overlaps or changes across languages.
-     * *Desc / Explanation:* The card component opening for "**手紙**" but displaying a completely blank metadata space, leaving the user with no relationship category, shows a failure to provide the core linguistic tag.
+# FEATURE 1 — Timed Game Loop Mode
+**Owner: George Liu**
+**Rubric contributions:** Baseline — same-page interaction (3 pts), dynamic frontend routes (4 pts), dynamic backend routes (part of 3 pts), Express + React (part of 5 pts)
 
-8. As a quiz player, I want to see a final similarity meter at the end of a round, so that I know the percentage of words that share the same meaning.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User answers the tenth and final question of a quiz round.
-     * *Step 2 (Output):* The system displays a summary dashboard featuring a "Similarity Meter: 30%" graphic based on the compiled question history data.
-     * *Desc / Explanation:* The system tallying the 10 completed questions and outputting a graphical gauge reading "Similarity Meter: 30%" proves that the final percentage summary matches the cultural theme of tracking vocabulary overlap.
-   * **Sequential Counterexample:**
-     * *Step 1 (Input):* User answers the tenth and final question of a quiz round.
-     * *Step 2 (Output):* The system displays a summary dashboard but only shows a raw score number, omitting the similarity meter calculation entirely.
-     * *Desc / Explanation:* The summary dashboard printing a raw point total but failing to display the "Similarity Meter" graphic demonstrates a design omission that cuts out the main theme payoff.
+> The core quiz game: choose a direction, see a word, pick the answer before the timer runs out.
 
-9. As a logged-in user, I want to see a list of words I keep missing on my profile page, so that I can study my missed words history.
-   * **Sequential Example:**
-     * *Step 1 (Input):* User clicks on their profile link navigation element.
-     * *Step 2 (Output):* The system fetches data rows from the user error database table and populates a scrollable list component displaying their missed words history.
-	 * *Desc / Explanation:* The system successfully executing a GET request to fetch the user's specific history and rendering a list filled with their missed words proves that mistake tracking is automated.
-	* **Sequential Counterexample:**
-	  * *Step 1 (Input):* User clicks on their profile link navigation element.
-	  * *Step 2 (Output):* The system displays a generic user profile page that lacks any history list component, forcing the user to manually track their own mistakes.
-      * *Desc / Explanation:* The profile page loading but containing no history list component, leaving the user completely unable to see their personal missed words, highlights a missing feature.
-        
-10. As a custom deck creator, I want to create, view, update, and delete my own word decks, so that I can manage custom words in the database table.
-	* **Sequential Example:**
-	  * *Step 1 (Input):* User opens a custom deck creator dashboard, types a word definition entry, and hits "Submit".
-	  * *Step 2 (Output):* The system sends an API request to the backend server, modifies the rows in the database table, and updates the visible deck list component instantly.
-      * *Desc / Explanation:* The custom deck dashboard capturing the input, executing a server-side table insert, and instantly drawing the new card content on the screen confirms that the user can manage persistent data packages via CRUD tools.
-	* **Sequential Counterexample:**
-	  * *Step 1 (Input):* User opens a custom deck creator dashboard, types a word definition entry, and hits "Submit".
-	  * *Step 2 (Output):* The system updates the text on the interface screen but fails to trigger any backend database table request, resulting in changes vanishing upon restarting the app.
-      * *Desc / Explanation:* The interface accepting the text typing but failing to trigger a backend database request, causing all custom deck data to vanish upon a page reload, reveals a broken database pipeline.
+### Story 1
+`[BASELINE — contributes to: same-page interaction 3 pts, dynamic frontend routes 4 pts]`
 
+As a **player**, I want to choose a game direction (Chinese → Japanese or Japanese → Chinese) on a setup screen so that I can practice in the direction that matches my learning goal.
+
+### Story 2
+`[BASELINE — contributes to: same-page interaction 3 pts, dynamic backend routes part of 3 pts]`
+
+As a **player**, I want to see a word displayed on the game screen with a visual countdown timer so that I know how much time I have left to answer.
+
+### Story 3
+`[BASELINE — contributes to: same-page interaction 3 pts]`
+
+As a **player**, I want the timer to stop and my answer to be recorded as soon as I click a multiple-choice option so that the game does not continue counting after I have responded.
+
+### Story 4
+`[BASELINE — contributes to: RESTful API GET part of 15 pts]`
+
+As a **player**, I want to see whether my answer was correct or incorrect immediately after clicking so that I can learn from my mistakes in real time without leaving the game page.
+
+---
+
+# FEATURE 2 — Dynamic Word Reveal Cards
+**Owner: Hunter Smith**
+**Rubric contributions:** Custom Required — slide-out pane or modal (3 pts), Baseline — same-page interaction (3 pts, shared with Feature 1)
+
+> After each answer, a modal card shows the full side-by-side linguistic breakdown and relationship tag for the word.
+
+### Story 5
+`[CUSTOM — slide-out pane or modal: 3 pts]`
+`[BASELINE — same-page interaction: 3 pts]`
+
+As a **player**, I want a modal card to appear on top of the current game screen after each answer so that I can see the full Chinese and Japanese breakdown of the word without navigating away from the game.
+
+### Story 6
+`[CUSTOM — slide-out pane or modal: 3 pts]`
+`[BASELINE — contributes to: RESTful API GET part of 15 pts]`
+
+As a **player**, I want the modal to display the word spelling, pronunciation, English meaning, and relationship tag (True Friend / False Friend / Half Friend) for both languages so that I understand exactly why the languages matched or did not match.
+
+### Story 7
+`[BASELINE — same-page interaction: 3 pts]`
+
+As a **player**, I want to close the modal with a button and immediately see the next question so that the game flow continues smoothly.
+
+---
+
+# FEATURE 3 — Final Similarity Meter Dashboard
+**Owner: Tasneem Shabana**
+**Rubric contributions:** Baseline — at least one redirection (3 pts), dynamic frontend routes (part of 4 pts), custom non-RESTful route (part of Custom 3 pts if selected)
+
+> After a quiz round ends, the player is redirected to a results screen showing their score and a similarity percentage bar.
+
+### Story 8
+`[BASELINE — at least one redirection: 3 pts, dynamic frontend routes part of 4 pts]`
+
+As a **player**, I want to be automatically redirected to a results screen after answering the final question in a round so that I do not have to navigate there manually.
+
+### Story 9
+`[BASELINE — contributes to: RESTful API GET part of 15 pts, dynamic backend routes part of 3 pts]`
+
+As a **player**, I want to see a similarity meter on the results screen that shows what percentage of the words in my round were True Friends so that I understand how much Chinese and Japanese overlapped in that session.
+
+### Story 10
+`[BASELINE — contributes to: hierarchical React components part of 6 pts]`
+
+As a **player**, I want to see my total score, number of correct answers, and average answer speed displayed alongside the similarity meter so that I have a complete summary of the round in one place.
+
+---
+
+# FEATURE 4 — Personal Missed Words History
+**Owner: Tasneem Shabana**
+**Rubric contributions:** Baseline — many-to-many with join table (part of 8 pts); Custom Required — data auto-generated on event (3 pts), unique field in join table (3 pts)
+
+> Every time a logged-in user answers incorrectly, the miss is recorded in a join table. The profile page surfaces the words they keep getting wrong.
+
+### Story 11
+`[BASELINE — many-to-many with join table part of 8 pts]`
+`[CUSTOM — data auto-generated on event: 3 pts]`
+
+As a **registered user**, I want a missed-word record to be automatically created in the database when I answer a question incorrectly so that I do not have to manually log my mistakes.
+
+### Story 12
+`[CUSTOM — unique field in join table: 3 pts]`
+
+As a **registered user**, I want each word I miss to have a running miss count stored as a unique field in the join table so that the app can rank words by how often I get them wrong.
+
+### Story 13
+`[BASELINE — contributes to: RESTful API GET part of 15 pts]`
+
+As a **registered user**, I want to view a "Words You Keep Missing" list on my profile page, sorted from most missed to least missed, so that I can focus my practice on my weakest words.
+
+---
+
+# FEATURE 5 — Custom Deck Creator (CRUD)
+**Owner: Robert Cunningham**
+**Rubric contributions:** Baseline — one-to-many DB relationship (part of 8 pts), full RESTful API GET/POST/PATCH/DELETE (15 pts), hierarchical React components (6 pts); Custom Required — POST/PATCH validated before DB update (3 pts)
+
+> Registered users can create, view, update, and delete custom word decks and the words inside them.
+
+### Story 14
+`[BASELINE — RESTful API POST part of 15 pts, one-to-many relationship part of 8 pts]`
+
+As a **registered user**, I want to create a new custom word deck by entering a title and clicking Save so that I can group words I want to study together.
+
+### Story 15
+`[BASELINE — RESTful API GET part of 15 pts, hierarchical React components part of 6 pts]`
+
+As a **registered user**, I want to view all of my custom decks in a dashboard with one card per deck so that I can quickly see and navigate to any of my decks.
+
+### Story 16
+`[BASELINE — RESTful API PATCH part of 15 pts]`
+
+As a **registered user**, I want to edit the title of an existing deck or update a word's definition inside a deck so that I can correct mistakes without deleting and recreating the deck.
+
+### Story 17
+`[BASELINE — RESTful API DELETE part of 15 pts]`
+
+As a **registered user**, I want to delete a deck or remove an individual word from a deck so that I can keep my decks clean and relevant.
+
+### Story 18
+`[CUSTOM — POST/PATCH validated before DB update: 3 pts]`
+
+As a **registered user**, I want the app to block me from saving a deck with a blank title or saving a word with an empty definition, showing an inline error message, so that my decks never contain incomplete entries.
+
+---
+
+# FEATURE 6 — Split Direction Leaderboards
+**Owner: Parth Patel**
+**Rubric contributions:** Baseline — reset database to default state (4 pts); Custom Required — filtering/sorting (3 pts)
+
+> A leaderboard ranked by score, split into two tabs by game direction. Players can toggle between "Chinese → Japanese" and "Japanese → Chinese" rankings.
+
+### Story 19
+`[BASELINE — contributes to: RESTful API GET part of 15 pts, dynamic frontend routes part of 4 pts]`
+
+As a **player**, I want to navigate to a leaderboard page after finishing a round so that I can compare my score with other players.
+
+### Story 20
+`[CUSTOM — filtering/sorting: 3 pts]`
+
+As a **player**, I want the leaderboard to be split by game direction so that scores from "Chinese → Japanese" players and "Japanese → Chinese" players are ranked separately and I can toggle between them without a page reload.
+
+### Story 21
+`[BASELINE — reset database to default state: 4 pts]`
+
+As an **admin**, I want to trigger a database reset endpoint so that all scores, missed-word records, and custom decks are wiped and the default word data is restored for testing.
+
+---
+
+# FEATURE 7 — Error Handling (All Features)
+**Owner: All (Parth Patel coordinates)**
+**Rubric contributions:** Custom Required — graceful error handling (3 pts)
+
+> Every API route returns a useful error message and HTTP status code. The frontend catches errors and shows user-friendly messages instead of blank screens or crashes.
+
+### Story 22
+`[CUSTOM — graceful error handling: 3 pts]`
+
+As a **player**, I want to see a friendly error message if the server fails to load a word or save my score so that I understand something went wrong instead of seeing a blank screen or crash.
+
+### Story 23
+`[CUSTOM — graceful error handling: 3 pts]`
+
+As a **registered user**, I want the app to display an inline error when a form submission fails (e.g., network error, duplicate entry) so that I know to try again without losing what I typed.
+
+---
+
+# FEATURE 8 — Authentication / Protected Routes
+**Owner: Parth Patel**
+**Rubric contributions:** Stretch — login required for subset of pages (3 pts)
+
+> GitHub OAuth or username/password login. Personal Missed Words History, Custom Deck Creator, and the user profile are protected routes that require login.
+
+### Story 24
+`[STRETCH — login required for subset of pages: 3 pts]`
+
+As a **visitor**, I want to log in with my GitHub account or a username and password so that I can access my personal saved data across sessions.
+
+### Story 25
+`[STRETCH — login required for subset of pages: 3 pts]`
+
+As a **visitor**, I want to be redirected to a login page if I try to access my profile, missed words list, or custom decks without being logged in so that personal data is protected.
+
+---
+
+# FEATURE 9 — Loading States & Button Safeguards
+**Owner: Hunter Smith**
+**Rubric contributions:** Stretch — show spinner while loading (2 pts), disable buttons during form submission (2 pts)
+
+> Spinner shown while data is fetching. Buttons are disabled during form submission and after being clicked to prevent double-submits.
+
+### Story 26
+`[STRETCH — show spinner while loading: 2 pts]`
+
+As a **player**, I want to see a loading spinner while the game screen fetches the next word from the database so that I know the app is working and have not hit an error.
+
+### Story 27
+`[STRETCH — disable buttons during form submission: 2 pts]`
+
+As a **registered user**, I want the Save button on a deck form to be disabled and visually grayed out while my submission is being sent to the server so that I cannot accidentally submit the form twice.
+
+---
+
+# FEATURE 10 — Toast Notifications
+**Owner: Robert Cunningham**
+**Rubric contributions:** Stretch — toast messages on user events (3 pts)
+
+> Brief toast pop-ups confirm successful actions (deck saved, word deleted, score submitted) and surface non-blocking errors.
+
+### Story 28
+`[STRETCH — toast messages: 3 pts]`
+
+As a **registered user**, I want a brief toast notification to appear at the bottom of the screen when I successfully save a deck, delete a word, or submit a score so that I get clear confirmation without a full-page alert.
+
+### Story 29
+`[STRETCH — toast messages: 3 pts]`
+
+As a **player**, I want a toast notification to appear when an action fails silently (e.g., score failed to save) so that I am informed without the game being interrupted.
+
+---
+
+## Story → Feature → Rubric Quick Reference
+
+| Story | Feature | Owner | Rubric Tag | Points |
+|---|---|---|---|---|
+| 1 | Timed Game Loop | George Liu | BASELINE – same-page interaction, dynamic routes | 3 + 4 |
+| 2 | Timed Game Loop | George Liu | BASELINE – same-page interaction, dynamic routes | 3 + 3 |
+| 3 | Timed Game Loop | George Liu | BASELINE – same-page interaction | 3 |
+| 4 | Timed Game Loop | George Liu | BASELINE – RESTful API GET | part of 15 |
+| 5 | Word Reveal Cards | Hunter Smith | CUSTOM – modal/pane + BASELINE same-page | 3 + 3 |
+| 6 | Word Reveal Cards | Hunter Smith | CUSTOM – modal/pane + BASELINE RESTful GET | 3 + part of 15 |
+| 7 | Word Reveal Cards | Hunter Smith | BASELINE – same-page interaction | 3 |
+| 8 | Similarity Meter | Tasneem Shabana | BASELINE – redirection, dynamic routes | 3 + 4 |
+| 9 | Similarity Meter | Tasneem Shabana | BASELINE – RESTful GET, dynamic backend routes | part of 15 + 3 |
+| 10 | Similarity Meter | Tasneem Shabana | BASELINE – hierarchical React components | part of 6 |
+| 11 | Missed Words | Tasneem Shabana | BASELINE – many-to-many + CUSTOM auto-generated data | part of 8 + 3 |
+| 12 | Missed Words | Tasneem Shabana | CUSTOM – unique field in join table | 3 |
+| 13 | Missed Words | Tasneem Shabana | BASELINE – RESTful GET | part of 15 |
+| 14 | Deck Creator | Robert Cunningham | BASELINE – RESTful POST, one-to-many | part of 15 + part of 8 |
+| 15 | Deck Creator | Robert Cunningham | BASELINE – RESTful GET, hierarchical components | part of 15 + part of 6 |
+| 16 | Deck Creator | Robert Cunningham | BASELINE – RESTful PATCH | part of 15 |
+| 17 | Deck Creator | Robert Cunningham | BASELINE – RESTful DELETE | part of 15 |
+| 18 | Deck Creator | Robert Cunningham | CUSTOM – POST/PATCH validated before DB update | 3 |
+| 19 | Leaderboards | Parth Patel | BASELINE – RESTful GET, dynamic routes | part of 15 + part of 4 |
+| 20 | Leaderboards | Parth Patel | CUSTOM – filtering/sorting | 3 |
+| 21 | Leaderboards | Parth Patel | BASELINE – reset database to default state | 4 |
+| 22 | Error Handling | All / Parth coordinates | CUSTOM – graceful error handling | 3 |
+| 23 | Error Handling | All / Parth coordinates | CUSTOM – graceful error handling | 3 |
+| 24 | Auth / Protected Routes | Parth Patel | STRETCH – login required for pages | 3 |
+| 25 | Auth / Protected Routes | Parth Patel | STRETCH – login required for pages | 3 |
+| 26 | Loading States | Hunter Smith | STRETCH – spinner while loading | 2 |
+| 27 | Loading States | Hunter Smith | STRETCH – disable buttons during submission | 2 |
+| 28 | Toast Notifications | Robert Cunningham | STRETCH – toast messages | 3 |
+| 29 | Toast Notifications | Robert Cunningham | STRETCH – toast messages | 3 |
