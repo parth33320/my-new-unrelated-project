@@ -11,6 +11,86 @@ This document details the interface layout and navigation mechanics for Tandem. 
 * **Page 6: Split-Direction Leaderboard Page**
 * **Page 7: User Authentication Gateway Page**
 
+graph TB
+    subgraph Browser_Window ["🌐 Web Browser Viewport: /dashboard"]
+        direction TB
+
+        %% ==================== HEADER BAR ====================
+        subgraph Top_Header_Grid ["Layout Block: Global Navigation Header Bar"]
+            direction LR
+            Header_Logo["logo 🔄 TANDEM"] --- Header_Spacer["                             "] --- Header_User["👤 @LearnerOne (Registered)"]
+        end
+
+        %% ==================== MAIN BANNER ====================
+        subgraph Hero_Section ["Layout Block: Hero Branding Banner"]
+            direction TB
+            Hero_Title["TANDEM: THE KANJI & HANZI OVERLAP CHALLENGE"]
+            Hero_Subtitle["Test your vocabulary intuition across Chinese and Japanese character traps."]
+        end
+
+        %% ==================== GAME CONFIGURATION AREA ====================
+        subgraph Setup_Container ["Layout Container: Game Session Setup (Story 1)"]
+            direction TB
+            Setup_Title["[ STEP 1: SELECT YOUR GAME DIRECTION ]"]
+            
+            subgraph Setup_Button_Grid ["Flexbox Row: Action Controls"]
+                direction LR
+                Btn_CN_JP[" BUTTON: 🇨🇳 Chinese ➔ Guess Japanese 🇯🇵 "]
+                Btn_JP_CN[" BUTTON: 🇯🇵 Japanese ➔ Guess Chinese 🇨🇳 "]
+            end
+        end
+
+        %% ==================== DASHBOARD ROW CONTENT ====================
+        subgraph Dashboard_Row_Grid ["Layout Container: Two-Column Workspace Split"]
+            direction LR
+            
+            subgraph Profile_Stats_Card ["Layout Widget: Personal Performance Summary"]
+                direction TB
+                Card_Title["📈 PROFILE ANALYTICS"]
+                Stat_1["• Personal High Score: 1,420 pts"]
+                Stat_2["• Overall System Accuracy: 78%"]
+            end
+
+            subgraph Quick_Actions_Card ["Layout Widget: Navigation Workspace Shortcuts"]
+                direction TB
+                Action_Title["🛠️ COMPONENT HUB"]
+                Link_Decks[" BUTTON: 🗂️ Manage Custom Decks (CRUD) "]
+                Link_Leaderboard[" BUTTON: 🏅 View Split Leaderboards "]
+            end
+        end
+
+        %% Layout Structure Ordering Connections
+        Top_Header_Grid --> Hero_Section
+        Hero_Section --> Setup_Container
+        Setup_Container --> Dashboard_Row_Grid
+    end
+
+    %% Structural Interface Theme Styling
+    style Browser_Window fill:#fafafa,stroke:#222,stroke-width:2px;
+    style Top_Header_Grid fill:#1a237e,stroke:#0d47a1,stroke-width:1px;
+    style Hero_Section fill:#ffffff,stroke:#cfd8dc,stroke-width:1px;
+    style Setup_Container fill:#ffffff,stroke:#cfd8dc,stroke-width:1px;
+    style Setup_Button_Grid fill:#fafafa,stroke:none;
+    style Dashboard_Row_Grid fill:#fafafa,stroke:none;
+    style Profile_Stats_Card fill:#ffffff,stroke:#b0bec5,stroke-width:1px;
+    style Quick_Actions_Card fill:#ffffff,stroke:#b0bec5,stroke-width:1px;
+    
+    %% UI Component Typography Node Coloring
+    style Header_Logo fill:none,stroke:none,color:#ffffff,font-weight:bold;
+    style Header_User fill:none,stroke:none,color:#ffffff;
+    style Hero_Title fill:none,stroke:none,font-size:18px,font-weight:bold;
+    style Hero_Subtitle fill:none,stroke:none,font-style:italic;
+    style Setup_Title fill:none,stroke:none,font-weight:bold;
+    style Card_Title fill:none,stroke:none,font-weight:bold;
+    style Action_Title fill:none,stroke:none,font-weight:bold;
+    
+    %% Button Nodes Formatting
+    style Btn_CN_JP fill:#00c853,stroke:#1b5e20,stroke-width:1px,color:#fff;
+    style Btn_JP_CN fill:#00c853,stroke:#1b5e20,stroke-width:1px,color:#fff;
+    style Link_Decks fill:#e0f7fa,stroke:#00838f,stroke-width:1px;
+    style Link_Leaderboard fill:#e0f7fa,stroke:#00838f,stroke-width:1px;
+
+
 ---
 
 ## Wireframe 1: Timed Game Loop Arena View (Feature 1)
