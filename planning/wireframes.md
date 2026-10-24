@@ -41,10 +41,16 @@ graph TD
         end
 
         %% Interactive Grid Nodes
-        subgraph Multiple_Choice_Grid ["Answer Input Grid Element (4 options)"]
-            direction INTERIOR
-            Btn_A["[A] Notebook"] --- Btn_B["[B] Toilet Paper"]
-            Btn_C["[C] Written Letter"] --- Btn_D["[D] Wallpaper"]
+        subgraph Multiple_Choice_Grid ["Answer Input Grid Element"]
+            direction TB
+            subgraph Row_1 ["Top Options Row"]
+                direction LR
+                Btn_A["[A] Notebook"] --- Btn_B["[B] Toilet Paper"]
+            end
+            subgraph Row_2 ["Bottom Options Row"]
+                direction LR
+                Btn_C["[C] Written Letter"] --- Btn_D["[D] Wallpaper"]
+            end
         end
 
         %% Connection Flows
@@ -59,6 +65,8 @@ graph TD
     style Main_Display_Zone fill:#fff,stroke:#b0bec5,stroke-width:2px;
     style Timer_Track fill:#fffde7,stroke:#fbc02d,stroke-width:1px;
     style Multiple_Choice_Grid fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px;
+    style Row_1 fill:#f5f5f5,stroke:none;
+    style Row_2 fill:#f5f5f5,stroke:none;
 ```
 
 ---
