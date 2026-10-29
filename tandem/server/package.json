@@ -1,0 +1,5 @@
+{
+  "name": "@tandem/server", "private": true, "version": "1.0.0", "type": "module",
+  "scripts": { "dev": "node --watch src/index.js", "start": "node src/index.js", "db:schema": "node src/db/migrate.js", "db:seed": "node src/db/seed.js" },
+  "dependencies": { "dotenv": "^17.2.3", "express": "^5.3.0", "pg": "^8.16.3" }
+}

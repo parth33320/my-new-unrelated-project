@@ -1,0 +1,23 @@
+# Deploy the repository containing this file as a Render Blueprint.
+services:
+  - type: web
+    name: tandem
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run db:schema && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.13.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tandem-db
+          property: connectionString
+databases:
+  - name: tandem-db
+    plan: free
+    databaseName: tandem
+    user: tandem
