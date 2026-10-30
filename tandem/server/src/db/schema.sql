@@ -37,3 +37,24 @@ CREATE TABLE IF NOT EXISTS words (
   level INTEGER NOT NULL CHECK (level BETWEEN 1 AND 5),
   note TEXT
 );
+
+CREATE TABLE IF NOT EXISTS decks (
+  id SERIAL PRIMARY KEY,
+  player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  deck_title TEXT NOT NULL CHECK (length(trim(deck_title)) >= 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS deck_words (
+  deck_id INTEGER NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
+  word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+  PRIMARY KEY (deck_id, word_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_missed_words (
+  player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+  total_miss_count INTEGER NOT NULL DEFAULT 1,
+  last_failed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (player_id, word_id)
+);
