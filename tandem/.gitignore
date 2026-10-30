@@ -7,3 +7,4 @@ client/dist/
 .DS_Store
 coverage/
 test-results/
+server_output.log
