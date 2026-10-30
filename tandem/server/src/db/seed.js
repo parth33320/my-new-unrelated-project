@@ -9,7 +9,7 @@ try {
   }
   client = await pool.connect();
   await client.query('BEGIN');
-  await client.query('TRUNCATE words RESTART IDENTITY');
+  await client.query('TRUNCATE words RESTART IDENTITY CASCADE');
   const columns = ['jp_form', 'zh_simplified', 'zh_traditional', 'jp_reading', 'pinyin',
     'relation', 'reading_type', 'meaning_ja', 'meaning_zh', 'distractors', 'category_ja',
     'category_zh', 'sentence_ja', 'sentence_ja_en', 'sentence_zh', 'sentence_zh_en', 'level', 'note'];
