@@ -1,16 +1,25 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { usePlayer } from '../context/PlayerContext.jsx';
 import Spinner from '../components/Spinner.jsx';
 import '../styles/Home.css';
 
 export default function Home() {
-  const [username, setUsername] = useState('');
+  const { player, setPlayer } = usePlayer();
+  const [username, setUsername] = useState(player?.username || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { setPlayer } = usePlayer();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectMessage = location.state?.message;
+
+  useEffect(() => {
+    if (player?.username) {
+      setUsername(player.username);
+    }
+  }, [player]);
 
   const handleStart = async (direction) => {
     const trimmed = username.trim();
@@ -23,11 +32,11 @@ export default function Home() {
     setError(null);
 
     try {
-      const player = await api('/players', {
+      const playerRes = await api('/players', {
         method: 'POST',
         body: JSON.stringify({ username: trimmed }),
       });
-      setPlayer(player);
+      setPlayer(playerRes);
       navigate('/game', { state: { direction } });
     } catch (err) {
       if (err.status === 409 || err.message?.toLowerCase().includes('taken')) {
@@ -47,6 +56,12 @@ export default function Home() {
       <p className="home-subtitle">
         Test your vocabulary knowledge across cognates and false friends between Chinese and Japanese.
       </p>
+
+      {redirectMessage && (
+        <div className="redirect-notice alert-warning" role="alert" style={{ margin: '1rem 0', color: '#c53030', fontWeight: 'bold' }}>
+          {redirectMessage}
+        </div>
+      )}
 
       <div className="home-form">
         <label htmlFor="username-input" className="form-label">

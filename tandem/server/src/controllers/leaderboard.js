@@ -50,8 +50,8 @@ export async function getLeaderboard(req, res, next) {
 
 export async function resetLeaderboard(req, res, next) {
   try {
-    await pool.query('TRUNCATE scores, user_missed_words, decks, deck_words RESTART IDENTITY CASCADE');
-    res.json({ message: 'Leaderboard reset successfully.' });
+    await pool.query('TRUNCATE scores, decks, deck_words, user_missed_words RESTART IDENTITY CASCADE');
+    res.json({ message: 'Database reset.' });
   } catch (error) {
     next(error);
   }
