@@ -4,6 +4,7 @@ import players from './routes/players.js';
 import scores from './routes/scores.js';
 import leaderboard from './routes/leaderboard.js';
 import words from './routes/words.js';
+import decks from './routes/decks.js';
 import { resetLeaderboard } from './controllers/leaderboard.js';
 
 export const app = express();
@@ -15,6 +16,7 @@ app.use('/api/players', players);
 app.use('/api/scores', scores);
 app.use('/api/leaderboard', leaderboard);
 app.use('/api/words', words);
+app.use('/api/decks', decks);
 app.use('/api', (req, res) => res.status(404).json({ error: 'API route not found.' }));
 
 if (process.env.NODE_ENV === 'production') {
@@ -30,7 +32,7 @@ app.use((req, res) => res.status(404).json({ error: 'Route not found.' }));
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   if (error.code === '23505') return res.status(409).json({ error: 'That username is taken. Try another.' });
-  if (error.code === '23503') return res.status(404).json({ error: 'Player not found.' });
+  if (error.code === '23503') return res.status(404).json({ error: 'Player or word not found.' });
   if (error.type === 'entity.parse.failed') return res.status(400).json({ error: 'Request body must be valid JSON.' });
   if (error.type === 'entity.too.large') return res.status(413).json({ error: 'Request body is too large.' });
   if (error.status && error.status < 500) return res.status(error.status).json({ error: error.message });

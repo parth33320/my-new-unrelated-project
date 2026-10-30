@@ -25,7 +25,11 @@ export function PlayerProvider({ children }) {
     }
   };
 
-  return <PlayerContext.Provider value={{ player, setPlayer }}>{children}</PlayerContext.Provider>;
+  const logout = () => {
+    setPlayer(null);
+  };
+
+  return <PlayerContext.Provider value={{ player, setPlayer, logout }}>{children}</PlayerContext.Provider>;
 }
 
 export function usePlayer() {
