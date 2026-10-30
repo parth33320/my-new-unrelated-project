@@ -1,1 +1,148 @@
-/* TODO: Results styles. */
+.results-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px;
+  text-align: center;
+}
+.results-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 16px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-top: 24px;
+}
+.score-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-item {
+  background: #faf9f5;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 600;
+}
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #203c36;
+}
+.stat-value.highlight {
+  color: var(--color-ja, #b45140);
+  font-size: 2rem;
+}
+.similarity-explanation {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 32px;
+}
+.missed-words-section {
+  text-align: left;
+  margin-bottom: 32px;
+}
+.missed-words-section h3 {
+  font-size: 1.1rem;
+  color: var(--color-zh, #295f51);
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e0e0d8;
+  padding-bottom: 8px;
+}
+.missed-words-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.missed-word-card {
+  background: #fdfbf7;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.missed-word-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.missed-word-display {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111;
+}
+.relation-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  color: #fff;
+}
+.relation-badge.relation-true {
+  background: #2e7d32;
+}
+.relation-badge.relation-false {
+  background: var(--color-ja, #b45140);
+}
+.relation-badge.relation-partial {
+  background: #f57c00;
+}
+.missed-word-meanings {
+  font-size: 0.9rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.perfect-score-msg {
+  background: #e6f4ea;
+  border: 1px solid #a5d6a7;
+  color: #1b5e20;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+.results-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 140px;
+}
+.btn-primary {
+  background: var(--color-zh, #295f51);
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background: #1d463b;
+}
+.btn-secondary {
+  background: #e8e8e0;
+  color: #203c36;
+}
+.btn-secondary:hover {
+  background: #d8d8ce;
+}

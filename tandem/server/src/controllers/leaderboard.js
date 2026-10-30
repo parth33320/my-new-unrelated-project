@@ -47,3 +47,12 @@ export async function getLeaderboard(req, res, next) {
     next(error);
   }
 }
+
+export async function resetLeaderboard(req, res, next) {
+  try {
+    await pool.query('TRUNCATE scores, user_missed_words CASCADE');
+    res.json({ message: 'Leaderboard reset successfully.' });
+  } catch (error) {
+    next(error);
+  }
+}

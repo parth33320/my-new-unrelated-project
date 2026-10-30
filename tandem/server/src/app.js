@@ -4,11 +4,13 @@ import players from './routes/players.js';
 import scores from './routes/scores.js';
 import leaderboard from './routes/leaderboard.js';
 import words from './routes/words.js';
+import { resetLeaderboard } from './controllers/leaderboard.js';
 
 export const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.post('/api/reset', resetLeaderboard);
 app.use('/api/players', players);
 app.use('/api/scores', scores);
 app.use('/api/leaderboard', leaderboard);

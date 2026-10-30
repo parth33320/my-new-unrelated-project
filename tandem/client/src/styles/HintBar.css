@@ -1,1 +1,31 @@
-/* TODO: HintBar styles. */
+.hint-bar-container {
+  margin: 12px 0;
+  display: flex;
+  justify-content: center;
+}
+.hint-btn {
+  background: #fdf6e3;
+  border: 1px solid #e0d0b0;
+  color: #856404;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hint-btn:hover:not(:disabled) {
+  background: #f7e8be;
+}
+.hint-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.hint-revealed {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  color: #7f5f00;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}

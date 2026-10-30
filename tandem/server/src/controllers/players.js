@@ -28,9 +28,18 @@ export async function getPlayer(req, res, next) {
       'SELECT id, score, direction, created_at FROM scores WHERE player_id = $1 ORDER BY created_at DESC LIMIT 10',
       [id]
     );
+    const missedResult = await pool.query(
+      `SELECT umw.word_id, umw.total_miss_count, umw.last_failed_at, w.jp_form, w.zh_simplified, w.meaning_ja, w.meaning_zh
+       FROM user_missed_words umw
+       JOIN words w ON umw.word_id = w.id
+       WHERE umw.player_id = $1
+       ORDER BY umw.total_miss_count DESC`,
+      [id]
+    );
     res.json({
       ...playerResult.rows[0],
       scores: scoresResult.rows,
+      missed_words: missedResult.rows,
     });
   } catch (error) {
     next(error);
