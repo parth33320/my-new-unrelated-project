@@ -1,6 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home.jsx';
-import Game from './pages/Game.jsx';
+import GamePage from './pages/GamePage.jsx';
 import Results from './pages/Results.jsx';
 import Leaderboard from './pages/Leaderboard.jsx';
 import Profile from './pages/Profile.jsx';
@@ -19,7 +19,7 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/game" element={<Game />} />
+          <Route path="/game" element={<GamePage />} />
           <Route path="/results" element={<Results />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
