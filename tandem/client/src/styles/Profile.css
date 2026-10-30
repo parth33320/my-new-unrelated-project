@@ -1,1 +1,176 @@
-/* TODO: Profile styles. */
+.profile-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  text-align: center;
+}
+.profile-container.empty-state {
+  padding: 64px 16px;
+}
+.profile-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 16px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-top: 24px;
+  text-align: left;
+}
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f0f0e8;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.username-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.username-display h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #203c36;
+}
+.edit-btn {
+  background: #f0f0e8;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.rename-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rename-input {
+  padding: 8px 12px;
+  border: 2px solid var(--color-border, #deded3);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.save-btn {
+  background: var(--color-zh, #295f51);
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cancel-btn {
+  background: #e0e0d8;
+  color: #333;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.delete-btn {
+  background: #fce8e6;
+  border: 1px solid #f5c6cb;
+  color: var(--color-ja, #b45140);
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.delete-btn:hover:not(:disabled) {
+  background: #f8d7da;
+}
+.error-text {
+  color: #d32f2f;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.profile-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.scores-section h3,
+.missed-words-section h3 {
+  font-size: 1.1rem;
+  color: var(--color-zh, #295f51);
+  margin-bottom: 16px;
+  border-bottom: 1px solid #deded3;
+  padding-bottom: 6px;
+}
+.scores-list,
+.missed-words-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.score-item {
+  background: #faf9f5;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.score-points {
+  font-weight: 700;
+  color: var(--color-ja, #b45140);
+}
+.score-dir {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  background: #eaeae0;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.score-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+.missed-word-item {
+  background: #fdfbf7;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 8px;
+  padding: 12px;
+}
+.missed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.missed-kanji {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111;
+}
+.miss-count-tag {
+  background: var(--color-ja, #b45140);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+.missed-details {
+  font-size: 0.85rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.no-data {
+  color: #888;
+  font-style: italic;
+}

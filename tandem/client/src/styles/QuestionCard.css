@@ -1,1 +1,79 @@
-/* TODO: QuestionCard styles. */
+.question-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border, #deded3);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+}
+.question-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.lang-tag {
+  background: var(--color-zh, #295f51);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.prompt-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+.kanji-display {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-weight: 700;
+  margin: 16px 0 32px;
+  color: #111;
+  line-height: 1.2;
+}
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.choice-btn {
+  background: #fcfbf8;
+  border: 2px solid var(--color-border, #deded3);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #203c36;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.choice-btn:hover:not(:disabled) {
+  border-color: var(--color-zh, #295f51);
+  background: #f0f7f4;
+  transform: translateY(-2px);
+}
+.choice-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+.choice-btn.correct {
+  background: #e6f4ea;
+  border-color: #2e7d32;
+  color: #1b5e20;
+  font-weight: 700;
+}
+.choice-btn.wrong {
+  background: #fce8e6;
+  border-color: var(--color-ja, #b45140);
+  color: #c62828;
+  font-weight: 700;
+}
