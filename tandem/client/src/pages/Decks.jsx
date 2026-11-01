@@ -14,6 +14,12 @@ export default function Decks() {
   const [newDeckTitle, setNewDeckTitle] = useState('');
   const [createError, setCreateError] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   // Inline title editing state
   const [editingDeckId, setEditingDeckId] = useState(null);
@@ -66,6 +72,7 @@ export default function Decks() {
       });
       setDecks((prev) => [created, ...prev]);
       setNewDeckTitle('');
+      showToast(`Deck "${created.deck_title}" saved successfully!`);
     } catch (err) {
       setCreateError(err.message || 'Failed to create deck.');
     } finally {
@@ -206,12 +213,18 @@ export default function Decks() {
               disabled={creating}
             />
             <button type="submit" className="btn btn-primary" disabled={creating}>
-              {creating ? 'Creating...' : 'Create Deck'}
+              {creating ? 'Saving...' : 'Save Deck'}
             </button>
           </div>
           {createError && <p className="error-text create-error-text">{createError}</p>}
         </form>
       </div>
+
+      {toastMessage && (
+        <div className="toast-notification" role="status">
+          🍞 {toastMessage}
+        </div>
+      )}
 
       {loading ? (
         <div className="loading-container">
