@@ -24,7 +24,7 @@ export default function App() {
         <nav aria-label="Main navigation">
           <NavLink to="/game">Play</NavLink>
           <NavLink to="/leaderboard">Leaderboard</NavLink>
-          <NavLink to="/decks">Decks</NavLink>
+          <NavLink to="/decks">My Decks</NavLink>
           <NavLink to="/profile">Profile</NavLink>
           {player && (
             <div className="user-nav-item" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginLeft: '1rem' }}>

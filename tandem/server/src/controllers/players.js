@@ -5,7 +5,9 @@ export async function createPlayer(req, res, next) {
   try {
     const username = parseUsername(req.body?.username);
     const result = await pool.query(
-      'INSERT INTO players (username) VALUES ($1) RETURNING id, username, created_at',
+      `INSERT INTO players (username) VALUES ($1)
+       ON CONFLICT (lower(username)) DO UPDATE SET username = EXCLUDED.username
+       RETURNING id, username, created_at`,
       [username]
     );
     res.status(201).json(result.rows[0]);
