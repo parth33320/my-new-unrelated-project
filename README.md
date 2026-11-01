@@ -50,7 +50,7 @@ Backend: Express, Node.js, PostgreSQL
 
 ---
 
-### Feature 1 — Timed Game Loop Mode
+### ✅ Feature 1 — Timed Game Loop Mode
 **Owner: George Liu** | Related stories: 1, 2, 3, 4
 
 **Rubric contributions:**
@@ -77,7 +77,7 @@ Backend: Express, Node.js, PostgreSQL
   - *Step 4 (Output):* The system does not stop the timer, does not record the choice, and the timer counts down to 0, causing a false game-over screen.
   - *Explanation:* The system failing to stop the timer at second 4 and forcing a false game-over screen despite the user clicking "Letter" demonstrates a broken game state where player input is completely ignored.
 
-[gif goes here]
+![Feature 1 Timed Game Loop](docs/assets/feature1-timed-game-loop.gif)
 
 ---
 
