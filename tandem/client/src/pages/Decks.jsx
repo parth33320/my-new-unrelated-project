@@ -113,6 +113,7 @@ export default function Decks() {
         prev.map((d) => (d.id === deckId ? { ...d, deck_title: updated.deck_title } : d))
       );
       cancelEditing();
+      showToast(`Deck renamed to "${updated.deck_title}"!`);
     } catch (err) {
       setEditError(err.message || 'Failed to update title.');
     } finally {
@@ -127,6 +128,7 @@ export default function Decks() {
     try {
       await api(`/decks/${deckId}`, { method: 'DELETE' });
       setDecks((prev) => prev.filter((d) => d.id !== deckId));
+      showToast('Deck deleted successfully!');
     } catch (err) {
       alert(err.message || 'Failed to delete deck.');
     }
