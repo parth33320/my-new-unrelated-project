@@ -17,6 +17,12 @@ export default function Profile() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState('');
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   const fetchProfile = useCallback(async (playerId) => {
     if (!playerId) return;
@@ -59,6 +65,7 @@ export default function Profile() {
       setPlayer(updated);
       setProfileData((prev) => ({ ...prev, username: updated.username }));
       setIsEditing(false);
+      showToast('Username updated!');
     } catch (err) {
       console.error('Failed to rename player:', err);
       if (err.status === 409 || err.message?.toLowerCase().includes('taken')) {
@@ -78,6 +85,7 @@ export default function Profile() {
     try {
       await api(`/players/${player.id}`, { method: 'DELETE' });
       setPlayer(null);
+      showToast('Profile deleted.');
       navigate('/');
     } catch (err) {
       console.error('Failed to delete profile:', err);
@@ -95,6 +103,12 @@ export default function Profile() {
         <button type="button" className="btn btn-primary" onClick={() => navigate('/')}>
           Go to Home
         </button>
+
+        {toastMessage && (
+          <div className="toast-notification" role="status">
+            🍞 {toastMessage}
+          </div>
+        )}
       </section>
     );
   }
@@ -219,6 +233,12 @@ export default function Profile() {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {toastMessage && (
+        <div className="toast-notification" role="status">
+          🍞 {toastMessage}
         </div>
       )}
     </section>

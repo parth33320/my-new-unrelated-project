@@ -23,6 +23,12 @@ export default function GamePage() {
   const [loading, setLoading] = useState(true);
   const [submittingScore, setSubmittingScore] = useState(false);
   const [error, setError] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -121,6 +127,7 @@ export default function GamePage() {
         word_ids: wrongWordIds,
       };
 
+      let saveFailed = false;
       try {
         if (player?.id) {
           await api('/scores', {
@@ -130,8 +137,14 @@ export default function GamePage() {
         }
       } catch (err) {
         console.error('Failed to save score:', err);
+        saveFailed = true;
       } finally {
         setSubmittingScore(false);
+        if (saveFailed) {
+          showToast('Score failed to save.');
+        } else {
+          showToast('Score saved!');
+        }
         navigate('/results', {
           state: {
             score,
@@ -213,6 +226,12 @@ export default function GamePage() {
           onNext={handleNextQuestion}
           isLastQuestion={currentIndex + 1 === questions.length}
         />
+      )}
+
+      {toastMessage && (
+        <div className="toast-notification" role="status">
+          🍞 {toastMessage}
+        </div>
       )}
     </section>
   );
