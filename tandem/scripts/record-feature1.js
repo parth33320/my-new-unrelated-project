@@ -98,7 +98,7 @@ async function recordFeature1() {
       contentType: 'application/json',
       body: JSON.stringify({
         id: 1,
-        username: 'JulesDemo1',
+        username: 'Feature1DemoUser',
         created_at: new Date().toISOString(),
       }),
     });
@@ -142,14 +142,14 @@ async function recordFeature1() {
   await page.waitForTimeout(500);
   await captureFrames(page, 3, 200);
 
-  // Enter username "JulesDemo1"
-  console.log('Entering username "JulesDemo1"...');
+  // Enter username "Feature1DemoUser"
+  console.log('Entering username "Feature1DemoUser"...');
   const usernameInput = page.locator('#username-input');
   await usernameInput.waitFor({ state: 'visible', timeout: 10000 });
   await usernameInput.click();
   await usernameInput.clear();
 
-  const username = 'JulesDemo1';
+  const username = 'Feature1DemoUser';
   for (const char of username) {
     await usernameInput.type(char, { delay: 80 });
     await captureFrames(page, 1, 50);
