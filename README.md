@@ -34,6 +34,22 @@ Backend: Express, Node.js, PostgreSQL
 
 ---
 
+## Continuous Integration & Environment Configuration
+
+### Configuring `DATABASE_URL` in GitHub Actions
+To configure CI tests that require database access (such as E2E or server tests connecting to PostgreSQL):
+1. Navigate to the GitHub repository on GitHub: `parth33320/my-new-unrelated-project`.
+2. Click **Settings** (tab at the top).
+3. In the left sidebar, expand **Secrets and variables** and select **Actions**.
+4. Under **Repository secrets**, click **New repository secret**.
+5. Set **Name** to `DATABASE_URL`.
+6. Set **Secret** to your PostgreSQL connection string (e.g. `postgresql://username:password@hostname:5432/database_name?sslmode=require`).
+7. Click **Add secret**.
+
+The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secrets.DATABASE_URL }}` into test and build jobs when triggered on push or pull request to `main`.
+
+---
+
 ## Features
 
 > **How to read this section**
