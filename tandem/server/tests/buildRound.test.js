@@ -57,6 +57,7 @@ describe('buildRound', () => {
           'meaning_ja',
           'meaning_zh',
           'pinyin',
+          'relation',
           'zh_simplified',
         ].sort());
       }

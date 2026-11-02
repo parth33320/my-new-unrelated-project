@@ -81,7 +81,7 @@ Backend: Express, Node.js, PostgreSQL
 
 ---
 
-### Feature 2 — Dynamic Word Reveal Cards
+### ✅ Feature 2 — Dynamic Word Reveal Cards
 **Owner: Hunter Smith** | Related stories: 5, 6, 7
 
 **Rubric contributions:**
@@ -106,7 +106,7 @@ Backend: Express, Node.js, PostgreSQL
   - *Step 4 (Output):* The card component leaves the relationship tag space blank because it failed to fetch the relationship metadata.
   - *Explanation:* The component failing to display the relationship tag demonstrates a database communication failure where crucial data is missing from the screen.
 
-[gif goes here]
+![Feature 2 Reveal Modal](docs/assets/feature2-reveal-modal.gif)
 
 ---
 
