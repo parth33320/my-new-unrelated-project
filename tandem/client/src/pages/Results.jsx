@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Results.css';
 
@@ -13,7 +14,18 @@ export default function Results() {
     wrongWords = [],
     questions = [],
     avgSpeedSeconds,
+    toastMessage: initialToast,
   } = state;
+
+  const [toastMessage, setToastMessage] = useState(initialToast || null);
+
+  useEffect(() => {
+    if (initialToast) {
+      setToastMessage(initialToast);
+      const timer = setTimeout(() => setToastMessage(null), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [initialToast]);
 
   const trueCount = questions.filter((q) => q.relation === 'true').length;
   const similarityPercent = questions.length > 0 ? Math.round((trueCount / questions.length) * 100) : 50;
@@ -83,6 +95,12 @@ export default function Results() {
           </button>
         </div>
       </div>
+
+      {toastMessage && (
+        <div className="toast-notification" role="status">
+          🍞 {toastMessage}
+        </div>
+      )}
     </section>
   );
 }
