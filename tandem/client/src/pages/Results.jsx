@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { calculateSimilarityPercent } from '../utils/speed.js';
 import '../styles/Results.css';
 
 export default function Results() {
@@ -16,7 +17,7 @@ export default function Results() {
   } = state;
 
   const trueCount = questions.filter((q) => q.relation === 'true').length;
-  const similarityPercent = questions.length > 0 ? Math.round((trueCount / questions.length) * 100) : 50;
+  const similarityPercent = questions.length > 0 ? calculateSimilarityPercent(trueCount, questions.length) : 50;
 
   return (
     <section className="results-container">
