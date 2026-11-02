@@ -3,7 +3,8 @@ import { httpError, parseDirection, parseId } from '../utils/validation.js';
 
 export async function createScore(req, res, next) {
   try {
-    const { player_id: rawPlayerId, score, direction: rawDirection, word_ids, missed_word_ids } = req.body || {};
+    const { score, direction: rawDirection, word_ids, missed_word_ids } = req.body || {};
+    const rawPlayerId = req.body?.playerId ?? req.body?.player_id;
     const playerId = parseId(rawPlayerId);
     const direction = parseDirection(rawDirection);
 

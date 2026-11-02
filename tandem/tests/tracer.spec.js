@@ -1,7 +1,70 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Feature 3 / Stories 8–10 — Final Similarity Meter & Avg Answer Speed', () => {
-  test('E2E: after completing a 10-question round, URL is /results and all stats are visible', async ({ page }) => {
+test.describe('Feature 1 — Timed Game Loop (Stories 1–4)', () => {
+  test('E2E: Start timed game, observe countdown, click choice, assert timer stops and reveal modal appears', async ({ page }) => {
+    // Navigate to /
+    await page.goto('/');
+
+    // Enter username
+    const usernameInput = page.locator('#username-input');
+    await expect(usernameInput).toBeVisible();
+    await usernameInput.fill('speed_runner');
+
+    // Click direction button
+    const directionBtn = page.locator('.start-btn.ja-btn').first();
+    await expect(directionBtn).toBeVisible();
+    await directionBtn.click();
+
+    // Assert .question-card visible with .kanji-display text and 4 .choice-btn elements
+    const questionCard = page.locator('.question-card');
+    await expect(questionCard).toBeVisible({ timeout: 15000 });
+
+    const kanjiDisplay = page.locator('.kanji-display');
+    await expect(kanjiDisplay).toBeVisible();
+    const kanjiText = await kanjiDisplay.innerText();
+    expect(kanjiText.trim().length).toBeGreaterThan(0);
+
+    const choices = page.locator('.choice-btn');
+    await expect(choices).toHaveCount(4);
+
+    // Assert timer counts down (.timer-display value decreases over 2 seconds)
+    const timerDisplay = page.locator('.timer-display');
+    await expect(timerDisplay).toBeVisible();
+
+    // Read initial timer value
+    const initialText = await timerDisplay.innerText();
+    const initialVal = parseInt(initialText.replace(/\D/g, ''), 10);
+
+    // Wait 2.2 seconds for timer to count down
+    await page.waitForTimeout(2200);
+
+    const secondText = await timerDisplay.innerText();
+    const secondVal = parseInt(secondText.replace(/\D/g, ''), 10);
+    expect(secondVal).toBeLessThan(initialVal);
+
+    // Click first choice
+    const firstChoice = choices.first();
+    await expect(firstChoice).toBeVisible();
+    await firstChoice.click();
+
+    // Assert timer stops (value no longer changes)
+    const stoppedText = await timerDisplay.innerText();
+    const stoppedVal = parseInt(stoppedText.replace(/\D/g, ''), 10);
+
+    await page.waitForTimeout(1500);
+
+    const postStopText = await timerDisplay.innerText();
+    const postStopVal = parseInt(postStopText.replace(/\D/g, ''), 10);
+    expect(postStopVal).toBe(stoppedVal);
+
+    // Assert .reveal-modal-card visible
+    const revealModal = page.locator('.reveal-modal-card');
+    await expect(revealModal).toBeVisible();
+  });
+});
+
+test.describe('Feature 3 / Story 10 — Average Answer Speed & Results Screen', () => {
+  test('E2E: play through a round against real DB, reach Results, assert avg speed stat', async ({ page }) => {
     // Navigate to home page
     await page.goto('/');
 
