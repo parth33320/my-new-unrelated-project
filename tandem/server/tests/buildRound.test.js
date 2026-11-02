@@ -63,4 +63,28 @@ describe('buildRound', () => {
       }
     }
   });
+
+  it('Feature 2 Unit Tests: buildRound question objects contain all required reveal fields and valid relation', () => {
+    const round = buildRound(sampleWords, 'zh-ja');
+    const validRelations = ['true', 'false', 'partial'];
+
+    for (const q of round) {
+      assert.ok(q.reveal, 'Question must have a reveal object');
+
+      // buildRound question objects contain reveal.jp_form, reveal.zh_simplified, reveal.jp_reading, reveal.pinyin, reveal.meaning_ja, reveal.meaning_zh, reveal.relation
+      assert.ok(q.reveal.jp_form, 'reveal.jp_form must exist');
+      assert.ok(q.reveal.zh_simplified, 'reveal.zh_simplified must exist');
+      assert.ok(q.reveal.jp_reading, 'reveal.jp_reading must exist');
+      assert.ok(q.reveal.pinyin, 'reveal.pinyin must exist');
+      assert.ok(q.reveal.meaning_ja, 'reveal.meaning_ja must exist');
+      assert.ok(q.reveal.meaning_zh, 'reveal.meaning_zh must exist');
+      assert.ok(q.reveal.relation, 'reveal.relation must exist');
+
+      // reveal.relation is one of 'true', 'false', 'partial'
+      assert.ok(
+        validRelations.includes(q.reveal.relation),
+        `reveal.relation must be one of 'true', 'false', 'partial', got: ${q.reveal.relation}`
+      );
+    }
+  });
 });
