@@ -10,7 +10,7 @@ function validateDeckTitle(title) {
 
 export async function getDecks(req, res, next) {
   try {
-    const rawPlayerId = req.query.player_id;
+    const rawPlayerId = req.query.player_id ?? req.query.playerId;
     if (!rawPlayerId) {
       throw httpError(400, 'player_id query parameter is required.');
     }
@@ -42,7 +42,11 @@ export async function getDecks(req, res, next) {
     `;
 
     const result = await pool.query(query, [playerId]);
-    res.json(result.rows);
+    const decks = result.rows.map((row) => ({
+      ...row,
+      title: row.deck_title,
+    }));
+    res.json(decks);
   } catch (error) {
     next(error);
   }
@@ -50,7 +54,8 @@ export async function getDecks(req, res, next) {
 
 export async function createDeck(req, res, next) {
   try {
-    const { player_id: rawPlayerId, deck_title, title } = req.body || {};
+    const rawPlayerId = req.body?.player_id ?? req.body?.playerId;
+    const { deck_title, title } = req.body || {};
     const playerId = parseId(rawPlayerId);
     const validTitle = validateDeckTitle(deck_title ?? title);
 
@@ -59,8 +64,10 @@ export async function createDeck(req, res, next) {
       [playerId, validTitle]
     );
 
+    const row = result.rows[0];
     res.status(201).json({
-      ...result.rows[0],
+      ...row,
+      title: row.deck_title,
       words: [],
     });
   } catch (error) {
@@ -95,6 +102,7 @@ export async function updateDeck(req, res, next) {
 
     res.json({
       ...deck,
+      title: deck.deck_title,
       words: wordsResult.rows,
     });
   } catch (error) {
@@ -111,7 +119,7 @@ export async function deleteDeck(req, res, next) {
       throw httpError(404, 'Deck not found.');
     }
 
-    res.json({ message: 'Deck deleted.' });
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
