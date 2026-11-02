@@ -63,8 +63,8 @@ test.describe('Feature 1 — Timed Game Loop (Stories 1–4)', () => {
   });
 });
 
-test.describe('Feature 3 / Story 10 — Average Answer Speed & Results Screen', () => {
-  test('E2E: play through a round against real DB, reach Results, assert avg speed stat', async ({ page }) => {
+test.describe('Feature 3 / Stories 8–10 — Final Similarity Meter & Avg Answer Speed', () => {
+  test('E2E: after completing a 10-question round, URL is /results and all stats are visible', async ({ page }) => {
     // Navigate to home page
     await page.goto('/');
 
