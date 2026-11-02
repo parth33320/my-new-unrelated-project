@@ -96,6 +96,7 @@ export function buildRound(words, direction = 'zh-ja') {
         meaning_zh: word.meaning_zh,
         jp_reading: word.jp_reading,
         pinyin: word.pinyin,
+        relation: word.relation,
       },
     };
   });
