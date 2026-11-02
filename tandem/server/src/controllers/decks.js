@@ -68,9 +68,36 @@ export async function createDeck(req, res, next) {
   }
 }
 
+async function verifyDeckOwnership(deckId, req) {
+  const deckCheck = await pool.query('SELECT player_id FROM decks WHERE id = $1', [deckId]);
+  if (deckCheck.rows.length === 0) {
+    throw httpError(404, 'Deck not found.');
+  }
+
+  const rawRequesterId =
+    req.body?.playerId ??
+    req.body?.player_id ??
+    req.query?.playerId ??
+    req.query?.player_id ??
+    req.headers?.['x-player-id'];
+
+  if (rawRequesterId === undefined || rawRequesterId === null || String(rawRequesterId).trim() === '') {
+    throw httpError(403, 'Forbidden');
+  }
+
+  const requesterId = Number(rawRequesterId);
+  if (isNaN(requesterId) || deckCheck.rows[0].player_id !== requesterId) {
+    throw httpError(403, 'Forbidden');
+  }
+
+  return deckCheck.rows[0];
+}
+
 export async function updateDeck(req, res, next) {
   try {
     const deckId = parseId(req.params.id);
+    await verifyDeckOwnership(deckId, req);
+
     const { deck_title, title } = req.body || {};
     const validTitle = validateDeckTitle(deck_title ?? title);
 
@@ -78,10 +105,6 @@ export async function updateDeck(req, res, next) {
       'UPDATE decks SET deck_title = $1 WHERE id = $2 RETURNING id, player_id, deck_title, created_at',
       [validTitle, deckId]
     );
-
-    if (updateResult.rows.length === 0) {
-      throw httpError(404, 'Deck not found.');
-    }
 
     const deck = updateResult.rows[0];
 
@@ -105,11 +128,9 @@ export async function updateDeck(req, res, next) {
 export async function deleteDeck(req, res, next) {
   try {
     const deckId = parseId(req.params.id);
-    const result = await pool.query('DELETE FROM decks WHERE id = $1 RETURNING id', [deckId]);
+    await verifyDeckOwnership(deckId, req);
 
-    if (result.rows.length === 0) {
-      throw httpError(404, 'Deck not found.');
-    }
+    await pool.query('DELETE FROM decks WHERE id = $1 RETURNING id', [deckId]);
 
     res.json({ message: 'Deck deleted.' });
   } catch (error) {
@@ -120,13 +141,10 @@ export async function deleteDeck(req, res, next) {
 export async function addWordToDeck(req, res, next) {
   try {
     const deckId = parseId(req.params.id);
+    await verifyDeckOwnership(deckId, req);
+
     const rawWordId = req.body?.word_id ?? req.body?.wordId;
     const wordId = parseId(rawWordId);
-
-    const deckCheck = await pool.query('SELECT id FROM decks WHERE id = $1', [deckId]);
-    if (deckCheck.rows.length === 0) {
-      throw httpError(404, 'Deck not found.');
-    }
 
     const wordCheck = await pool.query('SELECT id FROM words WHERE id = $1', [wordId]);
     if (wordCheck.rows.length === 0) {
@@ -147,12 +165,9 @@ export async function addWordToDeck(req, res, next) {
 export async function removeWordFromDeck(req, res, next) {
   try {
     const deckId = parseId(req.params.id);
-    const wordId = parseId(req.params.wordId);
+    await verifyDeckOwnership(deckId, req);
 
-    const deckCheck = await pool.query('SELECT id FROM decks WHERE id = $1', [deckId]);
-    if (deckCheck.rows.length === 0) {
-      throw httpError(404, 'Deck not found.');
-    }
+    const wordId = parseId(req.params.wordId);
 
     await pool.query('DELETE FROM deck_words WHERE deck_id = $1 AND word_id = $2', [deckId, wordId]);
 

@@ -49,6 +49,7 @@ export async function getLeaderboard(req, res, next) {
 }
 
 export async function resetLeaderboard(req, res, next) {
+  if (process.env.NODE_ENV === 'production') return res.status(403).json({ error: 'Forbidden' });
   try {
     await pool.query('TRUNCATE scores, decks, deck_words, user_missed_words RESTART IDENTITY CASCADE');
     res.json({ message: 'Database reset.' });

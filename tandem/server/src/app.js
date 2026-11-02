@@ -1,5 +1,6 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
+import rateLimit from 'express-rate-limit';
 import players from './routes/players.js';
 import scores from './routes/scores.js';
 import leaderboard from './routes/leaderboard.js';
@@ -7,12 +8,41 @@ import words from './routes/words.js';
 import decks from './routes/decks.js';
 import { resetLeaderboard } from './controllers/leaderboard.js';
 
+const rateLimitMessage = { error: 'Too many requests, slow down.' };
+
+export const playersPostLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: rateLimitMessage,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const scoresPostLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: rateLimitMessage,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: rateLimitMessage,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
+app.use(globalLimiter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.post('/api/reset', resetLeaderboard);
+app.post('/api/players', playersPostLimiter);
 app.use('/api/players', players);
+app.post('/api/scores', scoresPostLimiter);
 app.use('/api/scores', scores);
 app.use('/api/leaderboard', leaderboard);
 app.use('/api/words', words);

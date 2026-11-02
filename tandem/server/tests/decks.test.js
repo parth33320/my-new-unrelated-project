@@ -61,7 +61,7 @@ describe('Deck CRUD & Reset API Tests', () => {
         return { rows: [] };
       }
 
-      if (trimmed.startsWith('SELECT ID FROM DECKS')) {
+      if (trimmed.startsWith('SELECT ID FROM DECKS') || trimmed.startsWith('SELECT PLAYER_ID FROM DECKS')) {
         const [id] = params;
         const deck = decksDb.find((d) => d.id === id);
         return { rows: deck ? [deck] : [] };
@@ -129,16 +129,16 @@ describe('Deck CRUD & Reset API Tests', () => {
       // 4. PATCH /api/decks/10 with whitespace title -> 400
       res = await fetch(`${baseUrl}/api/decks/${mockDeckId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deck_title: '' }),
+        headers: { 'Content-Type': 'application/json', 'x-player-id': String(mockPlayerId) },
+        body: JSON.stringify({ deck_title: '', playerId: mockPlayerId }),
       });
       assert.equal(res.status, 400);
 
       // 5. PATCH /api/decks/10 with new title -> 200
       res = await fetch(`${baseUrl}/api/decks/${mockDeckId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deck_title: 'N4 Vocab' }),
+        headers: { 'Content-Type': 'application/json', 'x-player-id': String(mockPlayerId) },
+        body: JSON.stringify({ deck_title: 'N4 Vocab', playerId: mockPlayerId }),
       });
       assert.equal(res.status, 200);
       const updatedDeck = await res.json();
@@ -147,8 +147,8 @@ describe('Deck CRUD & Reset API Tests', () => {
       // 6. POST /api/decks/10/words -> add word
       res = await fetch(`${baseUrl}/api/decks/${mockDeckId}/words`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ word_id: 101 }),
+        headers: { 'Content-Type': 'application/json', 'x-player-id': String(mockPlayerId) },
+        body: JSON.stringify({ word_id: 101, playerId: mockPlayerId }),
       });
       assert.equal(res.status, 201);
 
@@ -161,12 +161,14 @@ describe('Deck CRUD & Reset API Tests', () => {
       // 7. DELETE /api/decks/10/words/101 -> remove word
       res = await fetch(`${baseUrl}/api/decks/${mockDeckId}/words/101`, {
         method: 'DELETE',
+        headers: { 'x-player-id': String(mockPlayerId) },
       });
       assert.equal(res.status, 200);
 
       // 8. DELETE /api/decks/10 -> delete deck
       res = await fetch(`${baseUrl}/api/decks/${mockDeckId}`, {
         method: 'DELETE',
+        headers: { 'x-player-id': String(mockPlayerId) },
       });
       assert.equal(res.status, 200);
 

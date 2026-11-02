@@ -109,7 +109,7 @@ describe('Controllers API Tests', () => {
     try {
       const res = await fetch(`http://localhost:${port}/api/players/1`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-player-id': '1' },
         body: JSON.stringify({ username: 'newname' })
       });
       assert.equal(res.status, 200);
@@ -133,7 +133,8 @@ describe('Controllers API Tests', () => {
 
     try {
       const res = await fetch(`http://localhost:${port}/api/players/1`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'x-player-id': '1' }
       });
       assert.equal(res.status, 204);
     } finally {
@@ -144,15 +145,20 @@ describe('Controllers API Tests', () => {
 
   it('POST /api/scores creates a score and upserts missed words', async () => {
     const executedQueries = [];
-    const originalQuery = pool.query;
-    pool.query = async (sql, params) => {
-      executedQueries.push({ sql, params });
-      if (sql.includes('INSERT INTO scores')) {
-        return {
-          rows: [{ id: 100, player_id: 1, score: 90, direction: 'zh-ja', created_at: '2025-01-01T00:00:00.000Z' }]
-        };
-      }
-      return { rows: [] };
+    const originalConnect = pool.connect;
+    pool.connect = async () => {
+      return {
+        query: async (sql, params) => {
+          executedQueries.push({ sql, params });
+          if (typeof sql === 'string' && sql.includes('INSERT INTO scores')) {
+            return {
+              rows: [{ id: 100, player_id: 1, score: 90, direction: 'zh-ja', created_at: '2025-01-01T00:00:00.000Z' }]
+            };
+          }
+          return { rows: [] };
+        },
+        release: () => {}
+      };
     };
 
     const server = app.listen(0);
@@ -167,9 +173,9 @@ describe('Controllers API Tests', () => {
       assert.equal(res.status, 201);
       const data = await res.json();
       assert.equal(data.id, 100);
-      assert.equal(executedQueries.length, 3); // 1 score insert + 2 missed words upserts
+      assert.equal(executedQueries.length, 5); // BEGIN, 1 score insert, 2 missed words upserts, COMMIT
     } finally {
-      pool.query = originalQuery;
+      pool.connect = originalConnect;
       server.close();
     }
   });

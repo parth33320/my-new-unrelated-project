@@ -51,6 +51,10 @@ export async function getPlayer(req, res, next) {
 export async function renamePlayer(req, res, next) {
   try {
     const id = parseId(req.params.id);
+    const requesterId = req.body?.player_id ?? req.body?.playerId ?? req.headers['x-player-id'];
+    if (requesterId === undefined || requesterId === null || String(requesterId).trim() === '' || Number(requesterId) !== id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
     const username = parseUsername(req.body?.username);
     const result = await pool.query(
       'UPDATE players SET username = $1 WHERE id = $2 RETURNING id, username, created_at',
@@ -68,6 +72,10 @@ export async function renamePlayer(req, res, next) {
 export async function deletePlayer(req, res, next) {
   try {
     const id = parseId(req.params.id);
+    const requesterId = req.body?.player_id ?? req.body?.playerId ?? req.headers['x-player-id'];
+    if (requesterId === undefined || requesterId === null || String(requesterId).trim() === '' || Number(requesterId) !== id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
     const result = await pool.query(
       'DELETE FROM players WHERE id = $1 RETURNING id',
       [id]
