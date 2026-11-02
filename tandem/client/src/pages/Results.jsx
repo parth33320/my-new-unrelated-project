@@ -12,6 +12,7 @@ export default function Results() {
     correctCount = 0,
     wrongWords = [],
     questions = [],
+    avgSpeedSeconds,
   } = state;
 
   const trueCount = questions.filter((q) => q.relation === 'true').length;
@@ -34,6 +35,12 @@ export default function Results() {
           <div className="stat-item">
             <span className="stat-label">True Friend Similarity</span>
             <span className="stat-value">{similarityPercent}%</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">Avg Answer Speed</span>
+            <span className="stat-value">
+              {typeof avgSpeedSeconds === 'number' && !isNaN(avgSpeedSeconds) ? `${avgSpeedSeconds}s` : 'N/A'}
+            </span>
           </div>
         </div>
 

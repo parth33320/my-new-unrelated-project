@@ -110,7 +110,7 @@ Backend: Express, Node.js, PostgreSQL
 
 ---
 
-### Feature 3 — Final Similarity Meter Dashboard
+### ✅ Feature 3 — Final Similarity Meter Dashboard
 **Owner: Tasneem Shabana** | Related stories: 8, 9, 10
 
 **Rubric contributions:**
@@ -137,7 +137,7 @@ Backend: Express, Node.js, PostgreSQL
   - *Step 4 (Output):* The system renders an error message or "0% Similarity Meter" instead of the real calculation.
   - *Explanation:* The system failing to count the true friends illustrates a dashboard calculation failure that deprives the player of their round summary.
 
-[gif goes here]
+![Feature 3 Similarity Meter](docs/assets/feature3-similarity-meter.gif)
 
 ---
 
