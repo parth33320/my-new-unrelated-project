@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { usePlayer } from '../context/PlayerContext.jsx';
 import { useTimer } from '../hooks/useTimer.js';
+import { calculateAverageSpeed } from '../utils/speed.js';
 import QuestionCard from '../components/QuestionCard.jsx';
 import Timer from '../components/Timer.jsx';
 import RevealCard from '../components/RevealCard.jsx';
@@ -34,6 +35,7 @@ export default function GamePage() {
   const [correctCount, setCorrectCount] = useState(0);
   const [wrongWordIds, setWrongWordIds] = useState([]);
   const [wrongWordDetails, setWrongWordDetails] = useState([]);
+  const [elapsedTimes, setElapsedTimes] = useState([]);
 
   const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null);
   const [categoryHintUsed, setCategoryHintUsed] = useState(false);
@@ -48,6 +50,9 @@ export default function GamePage() {
     setIsTimeout(true);
     setIsCorrect(false);
     setSelectedChoiceIndex(-1);
+
+    const elapsed = 10;
+    setElapsedTimes((prev) => [...prev, elapsed]);
 
     if (currentQuestion) {
       setWrongWordIds((prev) => [...prev, currentQuestion.wordId]);
@@ -83,6 +88,9 @@ export default function GamePage() {
 
     stop();
     setSelectedChoiceIndex(choiceIndex);
+
+    const elapsed = Math.max(0, 10 - secondsLeft);
+    setElapsedTimes((prev) => [...prev, elapsed]);
 
     const correct = choiceIndex === currentQuestion.correctIndex;
     setIsCorrect(correct);
@@ -145,6 +153,7 @@ export default function GamePage() {
         } else {
           showToast('Score saved!');
         }
+        const avgSpeedSeconds = calculateAverageSpeed(elapsedTimes);
         navigate('/results', {
           state: {
             score,
@@ -154,6 +163,7 @@ export default function GamePage() {
             questions,
             direction,
             player,
+            avgSpeedSeconds,
           },
         });
       }
