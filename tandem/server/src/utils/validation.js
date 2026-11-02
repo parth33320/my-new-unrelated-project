@@ -16,7 +16,8 @@ export function parseUsername(value) {
   return value.trim();
 }
 
-export function parseDirection(value = 'zh-ja') {
+export function parseDirection(value) {
+  if (!value) throw httpError(400, 'Direction is required.');
   if (!['zh-ja', 'ja-zh'].includes(value)) throw httpError(400, 'Direction must be zh-ja or ja-zh.');
   return value;
 }
