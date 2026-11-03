@@ -41,6 +41,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install dependencies
+        run: |
+          cd tandem && npm ci
+
+      - name: Build client
+        run: |
+          cd tandem && npm run build
+
       - name: Run e2e tests
         run: |
           cd tandem && npx playwright install --with-deps chromium && npx playwright test
