@@ -7,7 +7,7 @@ export default function Timer({ secondsLeft = 10, totalSeconds = 10 }) {
     <div className="timer-container">
       <div className="timer-header">
         <span className="timer-label">Time Remaining</span>
-        <span className={`timer-seconds ${secondsLeft <= 3 ? 'warning' : ''}`}>
+        <span className={`timer-seconds timer-display ${secondsLeft <= 3 ? 'warning' : ''}`}>
           {secondsLeft}s
         </span>
       </div>

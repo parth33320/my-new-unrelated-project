@@ -3,7 +3,10 @@ import { httpError, parseDirection } from '../utils/validation.js';
 
 export async function getLeaderboard(req, res, next) {
   try {
-    const direction = parseDirection(req.query.direction ?? 'zh-ja');
+    if (!req.query.direction) {
+      throw httpError(400, 'Direction query parameter is required.');
+    }
+    const direction = parseDirection(req.query.direction);
     const sort = req.query.sort === 'date' ? 'date' : 'score';
 
     let queryText = '';

@@ -14,6 +14,7 @@
     "dev": "concurrently -k -n API,WEB -c magenta,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
     "build": "npm run build -w client",
     "start": "npm run start -w server",
+    "test": "npm run test --workspace=server && npx playwright test",
     "db:schema": "npm run db:schema -w server",
     "db:seed": "npm run db:seed -w server"
   },

@@ -1,5 +1,20 @@
 {
-  "name": "@tandem/server", "private": true, "version": "1.0.0", "type": "module",
-  "scripts": { "dev": "node --watch src/index.js", "start": "node src/index.js", "db:schema": "node src/db/migrate.js", "db:seed": "node src/db/seed.js" },
-  "dependencies": { "dotenv": "^17.2.3", "express": "^5.3.0", "pg": "^8.16.3" }
+  "name": "@tandem/server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "test": "node --test tests/**/*.test.js",
+    "db:schema": "node src/db/migrate.js",
+    "db:seed": "node src/db/seed.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "pg": "^8.16.3"
+  }
 }

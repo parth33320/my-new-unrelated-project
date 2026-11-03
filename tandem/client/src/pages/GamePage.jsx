@@ -148,11 +148,8 @@ export default function GamePage() {
         saveFailed = true;
       } finally {
         setSubmittingScore(false);
-        if (saveFailed) {
-          showToast('Score failed to save.');
-        } else {
-          showToast('Score saved!');
-        }
+        const toastMsg = saveFailed ? 'Score failed to save.' : 'Score saved!';
+        showToast(toastMsg);
         const avgSpeedSeconds = calculateAverageSpeed(elapsedTimes);
         navigate('/results', {
           state: {
@@ -164,6 +161,7 @@ export default function GamePage() {
             direction,
             player,
             avgSpeedSeconds,
+            toastMessage: toastMsg,
           },
         });
       }

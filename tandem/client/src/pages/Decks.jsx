@@ -188,6 +188,7 @@ export default function Decks() {
           return d;
         })
       );
+      showToast('Word removed from deck.');
     } catch (err) {
       alert(err.message || 'Failed to remove word.');
     }
