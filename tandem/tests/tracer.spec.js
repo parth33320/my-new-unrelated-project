@@ -163,3 +163,67 @@ test.describe('Feature 3 / Stories 8–10 — Final Similarity Meter & Avg Answe
     expect(bodyText).not.toContain('Error:');
   });
 });
+
+test.describe('Feature 2 — Dynamic Word Reveal Cards (Stories 5–7)', () => {
+  test('E2E: Answer question, reveal modal appears within 5s with JA/ZH blocks and relation tag, next button dismisses modal and navigates to results on 10th question', async ({ page }) => {
+    // Navigate to /
+    await page.goto('/');
+
+    // Enter username
+    const usernameInput = page.locator('#username-input');
+    await expect(usernameInput).toBeVisible({ timeout: 15000 });
+    const uniqueUser = `reveal_${Date.now().toString().slice(-5)}`;
+    await usernameInput.fill(uniqueUser);
+
+    // Click direction button to start game
+    const startButton = page.locator('.start-btn.zh-btn').first();
+    await expect(startButton).toBeVisible();
+    await startButton.click();
+
+    // Verify questions 1 through 10
+    for (let qIndex = 1; qIndex <= 10; qIndex++) {
+      // Question card appears
+      const questionCard = page.locator('.question-card');
+      await expect(questionCard).toBeVisible({ timeout: 15000 });
+
+      // Click an answer choice
+      const choices = page.locator('.choice-btn');
+      await expect(choices.first()).toBeVisible({ timeout: 10000 });
+      await choices.first().click();
+
+      // After clicking an answer, .reveal-modal-card appears within 5s
+      const revealModal = page.locator('.reveal-modal-card');
+      await expect(revealModal).toBeVisible({ timeout: 5000 });
+
+      // Modal contains .reveal-lang-block.ja and .reveal-lang-block.zh both visible
+      const jaBlock = revealModal.locator('.reveal-lang-block.ja');
+      const zhBlock = revealModal.locator('.reveal-lang-block.zh');
+      await expect(jaBlock).toBeVisible();
+      await expect(zhBlock).toBeVisible();
+
+      // Modal shows a .relation-tag element with text matching /True Friend|False Friend|Partial Friend/i
+      const relationTag = revealModal.locator('.relation-tag');
+      await expect(relationTag).toBeVisible();
+      const relationText = await relationTag.innerText();
+      expect(relationText).toMatch(/True Friend|False Friend|Partial Friend/i);
+
+      // Next button
+      const nextBtn = revealModal.locator('.next-btn');
+      await expect(nextBtn).toBeVisible();
+
+      if (qIndex < 10) {
+        // Clicking .next-btn dismisses modal and shows next .question-card
+        await nextBtn.click();
+        await expect(revealModal).toBeHidden({ timeout: 5000 });
+        await expect(page.locator('.question-card')).toBeVisible({ timeout: 10000 });
+      } else {
+        // On last question (10th), clicking .next-btn navigates to /results
+        await nextBtn.click();
+        await page.waitForURL('**/results', { timeout: 15000 });
+        expect(page.url()).toMatch(/\/results$/);
+        const resultsContainer = page.locator('.results-container');
+        await expect(resultsContainer).toBeVisible({ timeout: 10000 });
+      }
+    }
+  });
+});
