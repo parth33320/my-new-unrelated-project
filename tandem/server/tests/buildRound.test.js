@@ -64,7 +64,11 @@ describe('buildRound Unit Tests', () => {
 });
 
 describe('GET /api/words/round Integration & Security Tests', () => {
-  it('GET /api/words/round?direction=zh-ja returns 200 with { questions, direction } against real Render DB', async () => {
+  it('GET /api/words/round?direction=zh-ja returns 200 with { questions, direction } against real Render DB', async (t) => {
+    if (!process.env.DATABASE_URL) {
+      t.skip('Skipping integration test against real DB because DATABASE_URL is not set');
+      return;
+    }
     const server = app.listen(0);
     const { port } = server.address();
     try {
@@ -107,9 +111,11 @@ describe('GET /api/words/round Integration & Security Tests', () => {
       );
       assert.equal(res.status, 400);
 
-      // Verify words table still exists in DB
-      const dbCheck = await pool.query('SELECT count(*) FROM words');
-      assert.ok(Number(dbCheck.rows[0].count) > 0);
+      // Verify words table still exists in DB if DATABASE_URL is set
+      if (process.env.DATABASE_URL) {
+        const dbCheck = await pool.query('SELECT count(*) FROM words');
+        assert.ok(Number(dbCheck.rows[0].count) > 0);
+      }
     } finally {
       server.close();
     }
