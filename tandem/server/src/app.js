@@ -1,4 +1,6 @@
 import express from 'express';
+import helmet from 'helmet';
+import compression from 'compression';
 import { fileURLToPath } from 'node:url';
 import players from './routes/players.js';
 import scores from './routes/scores.js';
@@ -9,6 +11,17 @@ import { resetLeaderboard } from './controllers/leaderboard.js';
 
 export const app = express();
 app.disable('x-powered-by');
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  })
+);
+app.use(compression());
 app.use(express.json({ limit: '16kb' }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.post('/api/reset', resetLeaderboard);
