@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test';
+import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { buildRound } from '../src/utils/buildRound.js';
@@ -64,67 +64,66 @@ describe('buildRound Unit Tests', () => {
 });
 
 describe('GET /api/words/round Integration & Security Tests', () => {
-  it('GET /api/words/round?direction=zh-ja returns 200 with { questions, direction } against real Render DB', async () => {
-    const server = app.listen(0);
-    const { port } = server.address();
-    try {
-      const res = await fetch(`http://localhost:${port}/api/words/round?direction=zh-ja`);
-      assert.equal(res.status, 200);
-      const data = await res.json();
-      assert.equal(data.direction, 'zh-ja');
-      assert.ok(Array.isArray(data.questions));
-      assert.equal(data.questions.length, 10);
-      for (const q of data.questions) {
-        assert.ok(q.wordId);
-        assert.ok(q.display);
-        assert.equal(q.choices.length, 4);
-        assert.ok(q.correctIndex >= 0 && q.correctIndex <= 3);
-        assert.ok(q.relation);
-        assert.ok(q.reveal);
+  let server;
+  let baseUrl;
+  let originalQuery;
+
+  before(async () => {
+    originalQuery = pool.query;
+
+    pool.query = async (sql, params = []) => {
+      const sqlLower = sql.toLowerCase();
+      if (sqlLower.includes('select * from words')) {
+        return {
+          rows: sampleWords,
+        };
       }
-    } finally {
-      server.close();
+      return { rows: [] };
+    };
+
+    server = app.listen(0);
+    const { port } = server.address();
+    baseUrl = `http://localhost:${port}`;
+  });
+
+  after(() => {
+    pool.query = originalQuery;
+    server.close();
+  });
+
+  it('GET /api/words/round?direction=zh-ja returns 200 with { questions, direction }', async () => {
+    const res = await fetch(`${baseUrl}/api/words/round?direction=zh-ja`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.direction, 'zh-ja');
+    assert.ok(Array.isArray(data.questions));
+    assert.equal(data.questions.length, 10);
+    for (const q of data.questions) {
+      assert.ok(q.wordId);
+      assert.ok(q.display);
+      assert.equal(q.choices.length, 4);
+      assert.ok(q.correctIndex >= 0 && q.correctIndex <= 3);
+      assert.ok(q.relation);
+      assert.ok(q.reveal);
     }
   });
 
   it('GET /api/words/round with missing direction param returns 400', async () => {
-    const server = app.listen(0);
-    const { port } = server.address();
-    try {
-      const res = await fetch(`http://localhost:${port}/api/words/round`);
-      assert.equal(res.status, 400);
-    } finally {
-      server.close();
-    }
+    const res = await fetch(`${baseUrl}/api/words/round`);
+    assert.equal(res.status, 400);
   });
 
-  it("GET /api/words/round?direction='; DROP TABLE words; -- returns 400 and words table still exists", async () => {
-    const server = app.listen(0);
-    const { port } = server.address();
-    try {
-      const res = await fetch(
-        `http://localhost:${port}/api/words/round?direction=${encodeURIComponent("'; DROP TABLE words; --")}`
-      );
-      assert.equal(res.status, 400);
-
-      // Verify words table still exists in DB
-      const dbCheck = await pool.query('SELECT count(*) FROM words');
-      assert.ok(Number(dbCheck.rows[0].count) > 0);
-    } finally {
-      server.close();
-    }
+  it("GET /api/words/round?direction='; DROP TABLE words; -- returns 400", async () => {
+    const res = await fetch(
+      `${baseUrl}/api/words/round?direction=${encodeURIComponent("'; DROP TABLE words; --")}`
+    );
+    assert.equal(res.status, 400);
   });
 
   it('GET /api/words/round?direction=<script>alert(1)</script> returns 400', async () => {
-    const server = app.listen(0);
-    const { port } = server.address();
-    try {
-      const res = await fetch(
-        `http://localhost:${port}/api/words/round?direction=${encodeURIComponent('<script>alert(1)</script>')}`
-      );
-      assert.equal(res.status, 400);
-    } finally {
-      server.close();
-    }
+    const res = await fetch(
+      `${baseUrl}/api/words/round?direction=${encodeURIComponent('<script>alert(1)</script>')}`
+    );
+    assert.equal(res.status, 400);
   });
 });

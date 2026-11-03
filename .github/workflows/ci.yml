@@ -41,9 +41,14 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run e2e tests
-        run: |
-          cd tandem && npx playwright install --with-deps chromium && npx playwright test
+      - name: Install Tandem dependencies
+        run: cd tandem && npm ci
+      - name: Install Playwright browsers
+        run: cd tandem && npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: cd tandem && npx playwright test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   build-client:
     name: build-client
