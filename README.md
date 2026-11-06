@@ -6,6 +6,8 @@ Designed and developed by: Parth Patel, Robert Cunningham, Tasneem Shabana, Hunt
 
 🔗 Link to deployed app: https://my-new-unrelated-project.onrender.com
 
+📹 [Full Demo Video Walkthrough (102/102 Points with Rubric Annotations)](docs/assets/tandem-demo-walkthrough.webm)
+
 ---
 
 ## About
