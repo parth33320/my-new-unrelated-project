@@ -1,10 +1,14 @@
 CREATE TABLE IF NOT EXISTS players (
   id SERIAL PRIMARY KEY,
   username VARCHAR(24) UNIQUE NOT NULL CHECK (length(trim(username)) BETWEEN 2 AND 24),
+  github_id TEXT UNIQUE,
+  avatar_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 -- Usernames are unique regardless of capitalization.
 CREATE UNIQUE INDEX IF NOT EXISTS players_username_lower ON players (lower(username));
+ALTER TABLE players ADD COLUMN IF NOT EXISTS github_id TEXT UNIQUE;
+ALTER TABLE players ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 
 CREATE TABLE IF NOT EXISTS scores (
   id SERIAL PRIMARY KEY,
@@ -58,3 +62,13 @@ CREATE TABLE IF NOT EXISTS user_missed_words (
   last_failed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY (player_id, word_id)
 );
+
+CREATE TABLE IF NOT EXISTS player_stats (
+  player_id      INTEGER PRIMARY KEY REFERENCES players(id) ON DELETE CASCADE,
+  total_rounds   INTEGER NOT NULL DEFAULT 0,
+  best_score     NUMERIC(8,2) NOT NULL DEFAULT 0,
+  avg_speed_ms   NUMERIC(10,2) NOT NULL DEFAULT 0,
+  avatar_url     TEXT,
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+ALTER TABLE player_stats ADD COLUMN IF NOT EXISTS avatar_url TEXT;

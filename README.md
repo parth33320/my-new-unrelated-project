@@ -4,7 +4,7 @@ CodePath WEB103 Final Project
 
 Designed and developed by: Parth Patel, Robert Cunningham, Tasneem Shabana, Hunter Smith, George Liu
 
-🔗 Link to deployed app:
+🔗 Link to deployed app: https://my-new-unrelated-project.onrender.com
 
 ---
 
@@ -30,7 +30,14 @@ Backend: Express, Node.js, PostgreSQL
 
 ## Installation Instructions
 
-[instructions go here]
+```bash
+git clone https://github.com/parth33320/my-new-unrelated-project.git
+cd my-new-unrelated-project/tandem
+npm ci
+cd server && cp .env.example .env  # fill in DATABASE_URL etc.
+npm run db:schema && npm run db:seed
+npm run dev
+```
 
 ---
 
@@ -157,7 +164,7 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 ---
 
-### Feature 4 — Personal Missed Words History
+### ✅ Feature 4 — Personal Missed Words History
 **Owner: Tasneem Shabana** | Related stories: 11, 12, 13
 
 **Rubric contributions:**
@@ -183,11 +190,11 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
   - *Step 4 (Output):* The system displays a generic welcome message and an empty list because it failed to pull the personal history.
   - *Explanation:* The profile page showing an empty list highlights a tracking failure where the user's personal mistake history is lost.
 
-[gif goes here]
+![Feature 4 Missed Words](docs/assets/feature4-missed-words.gif)
 
 ---
 
-### Feature 5 — Custom Deck Creator (CRUD)
+### ✅ Feature 5 — Custom Deck Creator (CRUD)
 **Owner: Robert Cunningham** | Related stories: 14, 15, 16, 17, 18
 
 **Rubric contributions:**
@@ -213,11 +220,11 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
   - *Step 4 (Output):* The user refreshes the browser and the new card disappears because the row was never saved.
   - *Explanation:* The system failing to send the database request, causing the card to disappear on refresh, demonstrates a lack of persistence.
 
-[gif goes here]
+![Feature 5 Decks CRUD](docs/assets/feature5-decks-crud.gif)
 
 ---
 
-### Feature 6 — Split Direction Leaderboards
+### ✅ Feature 6 — Split Direction Leaderboards
 **Owner: Parth Patel** | Related stories: 19, 20, 21
 
 **Rubric contributions:**
@@ -242,11 +249,11 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
   - *Step 4 (Output):* The component does nothing and continues showing the old scores.
   - *Explanation:* The component freezing demonstrates a failure in separating or rendering the alternate direction rankings.
 
-[gif goes here]
+![Feature 6 Leaderboard](docs/assets/feature6-leaderboard.gif)
 
 ---
 
-### Feature 7 — Graceful Error Handling ★
+### ✅ Feature 7 — Graceful Error Handling ★
 **Owner: All team members (Parth Patel coordinates)** | Related stories: 22, 23
 
 **Rubric contributions:**
@@ -256,7 +263,7 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 **Description:** Every API route returns a meaningful HTTP status code and error message. The frontend catches fetch errors and displays user-friendly messages instead of blank screens or crashes. Applies to all six features.
 
-[gif goes here]
+![Feature 7 Error Handling](docs/assets/feature7-error-handling.gif)
 
 ---
 

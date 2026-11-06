@@ -1,1 +1,1 @@
-TRUNCATE scores, decks, deck_words, user_missed_words RESTART IDENTITY CASCADE;
+TRUNCATE scores, decks, deck_words, user_missed_words, player_stats RESTART IDENTITY CASCADE;
