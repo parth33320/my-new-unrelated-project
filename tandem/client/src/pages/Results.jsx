@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { calculateSimilarityPercent } from '../utils/speed.js';
 import '../styles/Results.css';
@@ -6,6 +6,7 @@ import '../styles/Results.css';
 export default function Results() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [navigating, setNavigating] = useState(false);
 
   const state = location.state || {};
   const {
@@ -15,18 +16,7 @@ export default function Results() {
     wrongWords = [],
     questions = [],
     avgSpeedSeconds,
-    toastMessage: initialToast,
   } = state;
-
-  const [toastMessage, setToastMessage] = useState(initialToast || null);
-
-  useEffect(() => {
-    if (initialToast) {
-      setToastMessage(initialToast);
-      const timer = setTimeout(() => setToastMessage(null), 3500);
-      return () => clearTimeout(timer);
-    }
-  }, [initialToast]);
 
   const trueCount = questions.filter((q) => q.relation === 'true').length;
   const similarityPercent = questions.length > 0 ? calculateSimilarityPercent(trueCount, questions.length) : 50;
@@ -88,20 +78,41 @@ export default function Results() {
         )}
 
         <div className="results-actions">
-          <button type="button" className="btn btn-primary" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={navigating}
+            onClick={() => {
+              setNavigating(true);
+              navigate('/');
+            }}
+          >
             Play Again
           </button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/leaderboard')}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={navigating}
+            onClick={() => {
+              setNavigating(true);
+              navigate('/leaderboard');
+            }}
+          >
             Leaderboard
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={navigating}
+            onClick={() => {
+              setNavigating(true);
+              navigate('/decks');
+            }}
+          >
+            My Decks
           </button>
         </div>
       </div>
-
-      {toastMessage && (
-        <div className="toast-notification" role="status">
-          🍞 {toastMessage}
-        </div>
-      )}
     </section>
   );
 }

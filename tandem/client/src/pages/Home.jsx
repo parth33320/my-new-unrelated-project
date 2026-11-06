@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../api/client.js';
@@ -9,6 +10,7 @@ export default function Home() {
   const { player, setPlayer } = usePlayer();
   const [username, setUsername] = useState(player?.username || '');
   const [loading, setLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -90,6 +92,7 @@ export default function Home() {
           <button
             type="button"
             className="start-btn ja-btn"
+            title={username.trim().length < 2 ? 'Enter a username first' : ''}
             onClick={() => handleStart('zh-ja')}
             disabled={loading || username.trim().length < 2 || username.trim().length > 24}
           >
@@ -98,12 +101,44 @@ export default function Home() {
           <button
             type="button"
             className="start-btn zh-btn"
+            title={username.trim().length < 2 ? 'Enter a username first' : ''}
             onClick={() => handleStart('ja-zh')}
             disabled={loading || username.trim().length < 2 || username.trim().length > 24}
           >
             I know Japanese → guess Chinese
           </button>
         </div>
+      </div>
+
+      <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+        <button
+          type="button"
+          onClick={async () => {
+            setIsResetting(true);
+            try {
+              await api('/reset', { method: 'POST' });
+              toast.success('Database reset.');
+              setTimeout(() => window.location.reload(), 500);
+            } catch (err) {
+              toast.error('Reset failed.');
+            } finally {
+              setIsResetting(false);
+            }
+          }}
+          disabled={isResetting}
+          style={{
+            fontSize: '0.8rem',
+            padding: '4px 10px',
+            backgroundColor: '#e2e8f0',
+            color: '#4a5568',
+            border: '1px solid #cbd5e0',
+            borderRadius: '4px',
+            cursor: isResetting ? 'not-allowed' : 'pointer',
+            opacity: isResetting ? 0.6 : 1,
+          }}
+        >
+          {isResetting ? 'Resetting DB...' : 'Reset DB'}
+        </button>
       </div>
     </section>
   );

@@ -12,9 +12,25 @@ export async function createScore(req, res, next) {
       throw httpError(400, 'Score must be a non-negative number.');
     }
 
+    const speedMs = typeof req.body?.speed_ms === 'number' && !isNaN(req.body.speed_ms) && req.body.speed_ms >= 0
+      ? req.body.speed_ms
+      : 0;
+
     const scoreResult = await pool.query(
       'INSERT INTO scores (player_id, score, direction) VALUES ($1, $2, $3) RETURNING id, player_id, score, direction, created_at',
       [playerId, score, direction]
+    );
+
+    // Update player_stats row
+    await pool.query(
+      `INSERT INTO player_stats (player_id, total_rounds, best_score, avg_speed_ms, updated_at)
+       VALUES ($1, 1, $2, $3, NOW())
+       ON CONFLICT (player_id) DO UPDATE
+       SET total_rounds = player_stats.total_rounds + 1,
+           best_score   = GREATEST(player_stats.best_score, EXCLUDED.best_score),
+           avg_speed_ms = (player_stats.avg_speed_ms * player_stats.total_rounds + EXCLUDED.avg_speed_ms) / (player_stats.total_rounds + 1),
+           updated_at   = NOW()`,
+      [playerId, score, speedMs]
     );
 
     const missedIds = Array.isArray(word_ids)

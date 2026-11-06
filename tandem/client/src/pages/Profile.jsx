@@ -1,50 +1,70 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client.js';
+import { useAuth } from '../hooks/useAuth.js';
 import { usePlayer } from '../context/PlayerContext.jsx';
 import Spinner from '../components/Spinner.jsx';
 import '../styles/Profile.css';
 
 export default function Profile() {
+  const { user } = useAuth();
   const { player, setPlayer } = usePlayer();
   const navigate = useNavigate();
 
+  const activePlayer = user || player;
+
   const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [statsData, setStatsData] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [error, setError] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState('');
-  const [toastMessage, setToastMessage] = useState(null);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
 
   const fetchProfile = useCallback(async (playerId) => {
     if (!playerId) return;
     setLoading(true);
+    setStatsLoading(true);
     setError(null);
     try {
-      const data = await api(`/players/${playerId}`);
+      const [data, stats] = await Promise.all([
+        api(`/players/${playerId}`),
+        api(`/players/${playerId}/stats`).catch((err) => {
+          if (err.status === 404) return null;
+          throw err;
+        }),
+      ]);
       setProfileData(data);
+      setStatsData(stats);
+      setAvatarUrl(stats?.avatar_url || data?.avatar_url || null);
       setNewUsername(data.username);
     } catch (err) {
       console.error('Failed to load profile:', err);
       setError(err.message || 'Failed to load profile.');
     } finally {
       setLoading(false);
+      setStatsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (player?.id) {
-      fetchProfile(player.id);
+    if (activePlayer?.id) {
+      fetchProfile(activePlayer.id);
+    } else {
+      setLoading(false);
+      setStatsLoading(false);
     }
-  }, [player, fetchProfile]);
+  }, [activePlayer, fetchProfile]);
 
   const handleRename = async (e) => {
     e.preventDefault();
@@ -65,7 +85,7 @@ export default function Profile() {
       setPlayer(updated);
       setProfileData((prev) => ({ ...prev, username: updated.username }));
       setIsEditing(false);
-      showToast('Username updated!');
+      toast.success('Username updated!');
     } catch (err) {
       console.error('Failed to rename player:', err);
       if (err.status === 409 || err.message?.toLowerCase().includes('taken')) {
@@ -85,7 +105,7 @@ export default function Profile() {
     try {
       await api(`/players/${player.id}`, { method: 'DELETE' });
       setPlayer(null);
-      showToast('Profile deleted.');
+      toast.success('Profile deleted.');
       navigate('/');
     } catch (err) {
       console.error('Failed to delete profile:', err);
@@ -95,7 +115,7 @@ export default function Profile() {
     }
   };
 
-  if (!player) {
+  if (!activePlayer) {
     return (
       <section className="profile-container empty-state">
         <h1>Player Profile</h1>
@@ -103,12 +123,6 @@ export default function Profile() {
         <button type="button" className="btn btn-primary" onClick={() => navigate('/')}>
           Go to Home
         </button>
-
-        {toastMessage && (
-          <div className="toast-notification" role="status">
-            🍞 {toastMessage}
-          </div>
-        )}
       </section>
     );
   }
@@ -124,6 +138,97 @@ export default function Profile() {
         </div>
       ) : (
         <div className="profile-card">
+          {/* Avatar Upload Section */}
+          <div className="avatar-section" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
+            {previewUrl || avatarUrl ? (
+              <img
+                src={previewUrl || avatarUrl}
+                alt={profileData?.username || 'Avatar'}
+                style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #cbd5e0' }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '50%',
+                  background: '#3182ce',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.75rem',
+                  fontWeight: 'bold',
+                }}
+              >
+                {(profileData?.username || activePlayer?.username || 'U').slice(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <input
+                id="avatar-file-input"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      toast.error('Upload failed. Max 5MB.');
+                      return;
+                    }
+                    setSelectedFile(file);
+                    setPreviewUrl(URL.createObjectURL(file));
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={isUploading}
+                onClick={() => document.getElementById('avatar-file-input')?.click()}
+                style={{ marginRight: '0.5rem', padding: '6px 12px', fontSize: '0.9rem' }}
+              >
+                Change Photo
+              </button>
+              {selectedFile && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={isUploading}
+                  onClick={async () => {
+                    setIsUploading(true);
+                    const formData = new FormData();
+                    formData.append('avatar', selectedFile);
+                    try {
+                      const res = await fetch(`/api/players/${activePlayer.id}/avatar`, {
+                        method: 'POST',
+                        body: formData,
+                      });
+                      if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        throw new Error(err.error || 'Upload failed. Max 5MB.');
+                      }
+                      const result = await res.json();
+                      setAvatarUrl(result.avatar_url);
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      toast.success('Profile photo updated!');
+                    } catch (err) {
+                      toast.error(err.message || 'Upload failed. Max 5MB.');
+                    } finally {
+                      setIsUploading(false);
+                    }
+                  }}
+                  style={{ padding: '6px 12px', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  {isUploading && <Spinner size="small" />}
+                  {isUploading ? 'Uploading...' : 'Upload'}
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="profile-header">
             <div className="username-section">
               {!isEditing ? (
@@ -171,19 +276,63 @@ export default function Profile() {
               )}
             </div>
 
-            <button
-              type="button"
-              className="delete-btn"
-              onClick={handleDelete}
-              disabled={updating || deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete Profile'}
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={handleDelete}
+                disabled={updating || deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete Profile'}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={isLoggingOut}
+                onClick={async () => {
+                  setIsLoggingOut(true);
+                  try {
+                    await fetch('/auth/logout', { method: 'POST' });
+                  } catch {
+                    // ignore
+                  }
+                  toast('Logged out.');
+                  navigate('/');
+                  setIsLoggingOut(false);
+                }}
+                style={{ padding: '4px 10px', fontSize: '0.85rem' }}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
+              </button>
+            </div>
           </div>
 
           {error && <p className="error-text">{error}</p>}
 
-          {(updating || deleting) && <Spinner size="medium" />}
+          {(updating || deleting || clearing || isUploading) && <Spinner size="medium" />}
+
+          <div className="stats-section" style={{ margin: '1.5rem 0', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {statsLoading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Spinner size="small" />
+                <span>Loading stats...</span>
+              </div>
+            ) : !statsData ? (
+              <span className="no-stats">No stats yet</span>
+            ) : (
+              <>
+                <div className="stat-chip" style={{ background: '#edf2f7', padding: '0.5rem 1rem', borderRadius: '16px', fontWeight: '500' }}>
+                  Rounds: {statsData.total_rounds ?? 0}
+                </div>
+                <div className="stat-chip" style={{ background: '#edf2f7', padding: '0.5rem 1rem', borderRadius: '16px', fontWeight: '500' }}>
+                  Best: {parseFloat(statsData.best_score ?? 0)} pts
+                </div>
+                <div className="stat-chip" style={{ background: '#edf2f7', padding: '0.5rem 1rem', borderRadius: '16px', fontWeight: '500' }}>
+                  Avg speed: {statsData.avg_speed_ms ? (statsData.avg_speed_ms / 1000).toFixed(1) : 0}s
+                </div>
+              </>
+            )}
+          </div>
 
           <div className="profile-body">
             <div className="scores-section">
@@ -212,7 +361,31 @@ export default function Profile() {
             </div>
 
             <div className="missed-words-section">
-              <h3>Missed Words</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3>Missed Words</h3>
+                {profileData?.missed_words && profileData.missed_words.length > 0 && (
+                  <button
+                    type="button"
+                    className="clear-history-btn"
+                    onClick={() => {
+                      setClearing(true);
+                      setProfileData((prev) => ({ ...prev, missed_words: [] }));
+                      toast.success('Missed words history cleared.');
+                      setClearing(false);
+                    }}
+                    disabled={clearing}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '0.85rem',
+                      borderRadius: '4px',
+                      border: '1px solid #e2e8f0',
+                      cursor: clearing ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {clearing ? 'Clearing...' : 'Clear History'}
+                  </button>
+                )}
+              </div>
               {profileData?.missed_words && profileData.missed_words.length > 0 ? (
                 <ul className="missed-words-list">
                   {profileData.missed_words.map((item) => (
@@ -236,11 +409,6 @@ export default function Profile() {
         </div>
       )}
 
-      {toastMessage && (
-        <div className="toast-notification" role="status">
-          🍞 {toastMessage}
-        </div>
-      )}
     </section>
   );
 }

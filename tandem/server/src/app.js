@@ -1,7 +1,13 @@
 import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
+import session from 'express-session';
+import connectPg from 'connect-pg-simple';
+import passport from 'passport';
 import { fileURLToPath } from 'node:url';
+import { pool } from './db/pool.js';
+import './config/passport.js';
+import authRouter from './routes/auth.js';
 import players from './routes/players.js';
 import scores from './routes/scores.js';
 import leaderboard from './routes/leaderboard.js';
@@ -10,6 +16,7 @@ import decks from './routes/decks.js';
 import { resetLeaderboard } from './controllers/leaderboard.js';
 
 export const app = express();
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(
@@ -23,6 +30,28 @@ app.use(
 );
 app.use(compression());
 app.use(express.json({ limit: '16kb' }));
+
+const PgSession = connectPg(session);
+const sessionStore = process.env.DATABASE_URL
+  ? new PgSession({ pool, tableName: 'sessions', createTableIfMissing: true })
+  : undefined;
+
+app.use(
+  session({
+    store: sessionStore,
+    secret: process.env.SESSION_SECRET || 'changeme-tandem-secret-key-32chars',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/', authRouter);
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.post('/api/reset', resetLeaderboard);
 app.use('/api/players', players);

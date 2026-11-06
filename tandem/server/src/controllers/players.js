@@ -1,3 +1,4 @@
+import cloudinary from '../config/cloudinary.js';
 import { pool } from '../db/pool.js';
 import { httpError, parseId, parseUsername } from '../utils/validation.js';
 
@@ -10,7 +11,91 @@ export async function createPlayer(req, res, next) {
        RETURNING id, username, created_at`,
       [username]
     );
-    res.status(201).json(result.rows[0]);
+    const player = result.rows[0];
+    await pool.query(
+      'INSERT INTO player_stats (player_id) VALUES ($1) ON CONFLICT DO NOTHING',
+      [player.id]
+    );
+    res.status(201).json(player);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function uploadAvatar(req, res, next) {
+  try {
+    const id = parseId(req.params.id);
+    if (req.user && req.user.id !== id) {
+      throw httpError(403, 'Forbidden: You can only update your own avatar.');
+    }
+    if (!req.file || !req.file.buffer) {
+      throw httpError(400, 'Image file is required.');
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'tandem/avatars',
+          public_id: `player_${id}`,
+          overwrite: true,
+          transformation: [{ width: 200, height: 200, crop: 'fill', gravity: 'face' }],
+        },
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+      uploadStream.end(req.file.buffer);
+    });
+
+    const url = result.secure_url;
+    await pool.query(
+      `INSERT INTO player_stats (player_id, avatar_url, updated_at)
+       VALUES ($1, $2, NOW())
+       ON CONFLICT (player_id) DO UPDATE SET avatar_url = $2, updated_at = NOW()`,
+      [id, url]
+    );
+    await pool.query('UPDATE players SET avatar_url = $1 WHERE id = $2', [url, id]);
+
+    res.json({ avatar_url: url });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getPlayerStats(req, res, next) {
+  try {
+    const id = parseId(req.params.id);
+    const result = await pool.query(
+      'SELECT player_id, total_rounds, best_score, avg_speed_ms, updated_at FROM player_stats WHERE player_id = $1',
+      [id]
+    );
+    if (result.rows.length === 0) {
+      throw httpError(404, 'Player stats not found.');
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function recalculateStats(req, res, next) {
+  try {
+    const id = parseId(req.params.id);
+    const scoresAgg = await pool.query(
+      'SELECT COUNT(*)::int AS total_rounds, COALESCE(MAX(score), 0) AS best_score FROM scores WHERE player_id = $1',
+      [id]
+    );
+    const totalRounds = scoresAgg.rows[0]?.total_rounds ?? 0;
+    const bestScore = scoresAgg.rows[0]?.best_score ?? 0;
+
+    await pool.query(
+      `INSERT INTO player_stats (player_id, total_rounds, best_score, updated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (player_id) DO UPDATE
+       SET total_rounds = EXCLUDED.total_rounds,
+           best_score = EXCLUDED.best_score,
+           updated_at = NOW()`,
+      [id, totalRounds, bestScore]
+    );
+    res.json({ recalculated: true, total_rounds: totalRounds, best_score: bestScore });
   } catch (error) {
     next(error);
   }

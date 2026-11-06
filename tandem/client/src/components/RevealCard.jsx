@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RubyText from './RubyText.jsx';
 import '../styles/RevealCard.css';
 
@@ -8,6 +9,7 @@ export default function RevealCard({
   onNext,
   isLastQuestion = false,
 }) {
+  const [navigating, setNavigating] = useState(false);
   if (!question) return null;
 
   const reveal = question.reveal || {};
@@ -73,8 +75,20 @@ export default function RevealCard({
         </div>
 
         <div className="reveal-footer">
-          <button type="button" className="next-btn" onClick={onNext}>
-            {isLastQuestion ? 'View Results →' : 'Next Question →'}
+          <button
+            type="button"
+            className="next-btn"
+            disabled={navigating}
+            onClick={async () => {
+              setNavigating(true);
+              try {
+                await onNext();
+              } finally {
+                setNavigating(false);
+              }
+            }}
+          >
+            {navigating ? 'Loading...' : isLastQuestion ? 'View Results →' : 'Next Question →'}
           </button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api/client.js';
 import { usePlayer } from '../context/PlayerContext.jsx';
@@ -14,18 +15,15 @@ export default function Decks() {
   const [newDeckTitle, setNewDeckTitle] = useState('');
   const [createError, setCreateError] = useState(null);
   const [creating, setCreating] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
 
   // Inline title editing state
   const [editingDeckId, setEditingDeckId] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [editError, setEditError] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [addingWordId, setAddingWordId] = useState(null);
+  const [removingWordId, setRemovingWordId] = useState(null);
 
   // Word search state per deck
   const [searchQueries, setSearchQueries] = useState({});
@@ -72,9 +70,13 @@ export default function Decks() {
       });
       setDecks((prev) => [created, ...prev]);
       setNewDeckTitle('');
-      showToast(`Deck "${created.deck_title}" saved successfully!`);
+      toast.success('Deck created!');
     } catch (err) {
-      setCreateError(err.message || 'Failed to create deck.');
+      if (err.status === 401) {
+        toast.error('Please log in first.');
+      } else {
+        setCreateError(err.message || 'Failed to create deck.');
+      }
     } finally {
       setCreating(false);
     }
@@ -113,9 +115,13 @@ export default function Decks() {
         prev.map((d) => (d.id === deckId ? { ...d, deck_title: updated.deck_title } : d))
       );
       cancelEditing();
-      showToast(`Deck renamed to "${updated.deck_title}"!`);
+      toast.success('Deck saved!');
     } catch (err) {
-      setEditError(err.message || 'Failed to update title.');
+      if (err.status === 401) {
+        toast.error('Please log in first.');
+      } else {
+        setEditError(err.message || 'Failed to update title.');
+      }
     } finally {
       setUpdatingId(null);
     }
@@ -124,13 +130,19 @@ export default function Decks() {
   // 3. Delete Deck
   const handleDeleteDeck = async (deckId) => {
     if (!window.confirm('Are you sure you want to delete this deck?')) return;
-
+    setDeletingId(deckId);
     try {
       await api(`/decks/${deckId}`, { method: 'DELETE' });
       setDecks((prev) => prev.filter((d) => d.id !== deckId));
-      showToast('Deck deleted successfully!');
+      toast.success('Deck deleted.');
     } catch (err) {
-      alert(err.message || 'Failed to delete deck.');
+      if (err.status === 401) {
+        toast.error('Please log in first.');
+      } else {
+        alert(err.message || 'Failed to delete deck.');
+      }
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -155,6 +167,7 @@ export default function Decks() {
 
   // 5. Add Word to Deck
   const handleAddWord = async (deck, word) => {
+    setAddingWordId(word.id);
     try {
       await api(`/decks/${deck.id}/words`, {
         method: 'POST',
@@ -171,13 +184,21 @@ export default function Decks() {
           return d;
         })
       );
+      toast.success('Word added to deck.');
     } catch (err) {
-      alert(err.message || 'Failed to add word to deck.');
+      if (err.status === 401) {
+        toast.error('Please log in first.');
+      } else {
+        alert(err.message || 'Failed to add word to deck.');
+      }
+    } finally {
+      setAddingWordId(null);
     }
   };
 
   // 6. Remove Word from Deck
   const handleRemoveWord = async (deckId, wordId) => {
+    setRemovingWordId(wordId);
     try {
       await api(`/decks/${deckId}/words/${wordId}`, { method: 'DELETE' });
       setDecks((prev) =>
@@ -188,9 +209,15 @@ export default function Decks() {
           return d;
         })
       );
-      showToast('Word removed from deck.');
+      toast('Word removed.');
     } catch (err) {
-      alert(err.message || 'Failed to remove word.');
+      if (err.status === 401) {
+        toast.error('Please log in first.');
+      } else {
+        alert(err.message || 'Failed to remove word.');
+      }
+    } finally {
+      setRemovingWordId(null);
     }
   };
 
@@ -222,12 +249,6 @@ export default function Decks() {
           {createError && <p className="error-text create-error-text">{createError}</p>}
         </form>
       </div>
-
-      {toastMessage && (
-        <div className="toast-notification" role="status">
-          🍞 {toastMessage}
-        </div>
-      )}
 
       {loading ? (
         <div className="loading-container">
@@ -265,10 +286,11 @@ export default function Decks() {
                         <button
                           type="button"
                           className="btn-icon delete-deck-btn"
+                          disabled={deletingId === deck.id}
                           onClick={() => handleDeleteDeck(deck.id)}
                           title="Delete Deck"
                         >
-                          🗑️ Delete
+                          {deletingId === deck.id ? 'Deleting...' : '🗑️ Delete'}
                         </button>
                       </div>
                     </div>
@@ -314,10 +336,11 @@ export default function Decks() {
                             <button
                               type="button"
                               className="remove-word-btn"
+                              disabled={removingWordId === w.id}
                               onClick={() => handleRemoveWord(deck.id, w.id)}
                               title="Remove Word"
                             >
-                              ✕
+                              {removingWordId === w.id ? '...' : '✕'}
                             </button>
                           </li>
                         ))}
@@ -343,6 +366,7 @@ export default function Decks() {
                       <ul className="search-results-list">
                         {results.map((w) => {
                           const isAlreadyInDeck = (deck.words || []).some((item) => item.id === w.id);
+                          const isFull = (deck.words || []).length >= 20;
                           return (
                             <li key={w.id} className="search-result-item">
                               <span className="result-kanji">{w.jp_form} / {w.zh_simplified}</span>
@@ -351,9 +375,9 @@ export default function Decks() {
                                 type="button"
                                 className="add-word-btn"
                                 onClick={() => handleAddWord(deck, w)}
-                                disabled={isAlreadyInDeck}
+                                disabled={isAlreadyInDeck || isFull || addingWordId === w.id}
                               >
-                                {isAlreadyInDeck ? 'Added' : '+ Add'}
+                                {addingWordId === w.id ? 'Adding...' : isAlreadyInDeck ? 'Added' : isFull ? '(Full — 20/20)' : '+ Add'}
                               </button>
                             </li>
                           );

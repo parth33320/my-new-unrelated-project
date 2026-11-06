@@ -56,16 +56,16 @@ export default function Leaderboard() {
             <button
               type="button"
               className={`toggle-btn ${direction === 'zh-ja' ? 'active' : ''}`}
-              onClick={() => setDirection('zh-ja')}
               disabled={loading || resetting}
+              onClick={() => setDirection('zh-ja')}
             >
               Chinese → Japanese
             </button>
             <button
               type="button"
               className={`toggle-btn ${direction === 'ja-zh' ? 'active' : ''}`}
-              onClick={() => setDirection('ja-zh')}
               disabled={loading || resetting}
+              onClick={() => setDirection('ja-zh')}
             >
               Japanese → Chinese
             </button>
@@ -114,7 +114,7 @@ export default function Leaderboard() {
       ) : (
         <div className="table-responsive">
           {entries.length === 0 ? (
-            <p className="empty-msg">No scores logged for this direction yet. Play a game to get on the board!</p>
+            <p className="empty-msg">No scores yet for this direction</p>
           ) : (
             <table className="leaderboard-table">
               <thead>
@@ -128,7 +128,35 @@ export default function Leaderboard() {
               <tbody>
                 {entries.map((entry, index) => (
                   <tr key={entry.player_id || index}>
-                    <td className="rank-col">#{index + 1}</td>
+                    <td className="rank-col">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>#{index + 1}</span>
+                        {entry.avatar_url ? (
+                          <img
+                            src={entry.avatar_url}
+                            alt={entry.username}
+                            style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              backgroundColor: '#a0aec0',
+                              color: '#fff',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '11px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {(entry.username || 'U')[0].toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td className="username-col">{entry.username}</td>
                     <td className="score-col">{Number(entry.best_score).toFixed(0)} pts</td>
                     <td className="date-col">

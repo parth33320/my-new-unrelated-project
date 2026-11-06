@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../api/client.js';
@@ -24,12 +25,6 @@ export default function GamePage() {
   const [loading, setLoading] = useState(true);
   const [submittingScore, setSubmittingScore] = useState(false);
   const [error, setError] = useState(null);
-  const [toastMessage, setToastMessage] = useState(null);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
 
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -128,29 +123,28 @@ export default function GamePage() {
       setSubmittingScore(true);
       setError(null);
 
+      const avgSpeedSeconds = calculateAverageSpeed(elapsedTimes);
       const payload = {
         player_id: player?.id || 1,
         score: score,
         direction: direction,
         word_ids: wrongWordIds,
+        speed_ms: Math.round(avgSpeedSeconds * 1000),
       };
 
-      let saveFailed = false;
       try {
         if (player?.id) {
           await api('/scores', {
             method: 'POST',
             body: JSON.stringify(payload),
           });
+          toast.success('Score saved!');
         }
       } catch (err) {
         console.error('Failed to save score:', err);
-        saveFailed = true;
+        toast.error('Could not save score.');
       } finally {
         setSubmittingScore(false);
-        const toastMsg = saveFailed ? 'Score failed to save.' : 'Score saved!';
-        showToast(toastMsg);
-        const avgSpeedSeconds = calculateAverageSpeed(elapsedTimes);
         navigate('/results', {
           state: {
             score,
@@ -161,7 +155,6 @@ export default function GamePage() {
             direction,
             player,
             avgSpeedSeconds,
-            toastMessage: toastMsg,
           },
         });
       }
@@ -236,11 +229,6 @@ export default function GamePage() {
         />
       )}
 
-      {toastMessage && (
-        <div className="toast-notification" role="status">
-          🍞 {toastMessage}
-        </div>
-      )}
     </section>
   );
 }
