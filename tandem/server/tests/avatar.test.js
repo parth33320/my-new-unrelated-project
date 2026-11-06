@@ -4,6 +4,8 @@ import { app } from '../src/app.js';
 
 describe('Session PC: Cloudinary Avatar Upload tests', () => {
   it('POST /api/players/:id/avatar without auth returns 401', async () => {
+    const oldEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
     const server = app.listen(0);
     const { port } = server.address();
     const baseUrl = `http://localhost:${port}`;
@@ -16,6 +18,7 @@ describe('Session PC: Cloudinary Avatar Upload tests', () => {
       const data = await res.json();
       assert.equal(data.error, 'Login required.');
     } finally {
+      process.env.NODE_ENV = oldEnv;
       server.close();
     }
   });

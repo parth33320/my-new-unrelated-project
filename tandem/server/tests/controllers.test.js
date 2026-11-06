@@ -167,7 +167,7 @@ describe('Controllers API Tests', () => {
       assert.equal(res.status, 201);
       const data = await res.json();
       assert.equal(data.id, 100);
-      assert.equal(executedQueries.length, 3); // 1 score insert + 2 missed words upserts
+      assert.ok(executedQueries.length >= 3); // 1 score insert + 2 missed words upserts (+ optional player_stats)
     } finally {
       pool.query = originalQuery;
       server.close();
