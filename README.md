@@ -267,7 +267,7 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 ---
 
-### Feature 8 — Authentication / Protected Routes ✨
+### ✅ Feature 8 — Authentication / Protected Routes ✨
 **Owner: Parth Patel** | Related stories: 24, 25
 
 **Rubric contributions:**
@@ -277,11 +277,11 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 **Description:** GitHub OAuth or username/password login. The Personal Missed Words History, Custom Deck Creator, and profile pages are protected routes that redirect unauthenticated users to the login screen.
 
-[gif goes here]
+![Feature 8 Protected Routes](docs/assets/feature8-protected-routes.gif)
 
 ---
 
-### Feature 9 — Loading States & Button Safeguards ✨
+### ✅ Feature 9 — Loading States & Button Safeguards ✨
 **Owner: Hunter Smith** | Related stories: 26, 27
 
 **Rubric contributions:**
@@ -292,11 +292,11 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 **Description:** A spinner is shown while data is being fetched from the server. Buttons are disabled and grayed out during active form submissions to prevent double-submits.
 
-[gif goes here]
+![Feature 9 Loading States](docs/assets/feature9-loading-states.gif)
 
 ---
 
-### Feature 10 — Toast Notifications ✨
+### ✅ Feature 10 — Toast Notifications ✨
 **Owner: Robert Cunningham** | Related stories: 28, 29
 
 **Rubric contributions:**
@@ -306,7 +306,7 @@ The CI workflow `.github/workflows/ci.yml` will automatically inject `${{ secret
 
 **Description:** Brief non-blocking toast notifications confirm successful actions (deck saved, word deleted, score submitted) and surface soft errors (score failed to save) without interrupting the user's flow.
 
-[gif goes here]
+![Feature 10 Toasts](docs/assets/feature10-toasts.gif)
 
 ---
 
@@ -316,43 +316,43 @@ Use this as your final checklist before submitting. Every item maps to a feature
 
 ### Baseline Features — 59 pts total (MUST complete ALL)
 
-- [ ] The project includes an Express backend app and a React frontend app — **5 pts** — *All features*
-- [ ] The project includes dynamic routes for both frontend and backend apps — **3 pts** — *Features 1, 3, 5, 6*
-- [ ] The project includes at least one of each DB relationship:
-  - [ ] one-to-many — **part of 8 pts** — *Feature 5 (deck → words) · Owner: Robert Cunningham*
-  - [ ] many-to-many with a join table — **part of 8 pts** — *Feature 4 (users ↔ words) · Owner: Tasneem Shabana*
-- [ ] The project includes a well-designed RESTful API — **15 pts** — *Feature 5 satisfies all four verbs*
-  - [ ] GET (view items)
-  - [ ] POST (create item)
-  - [ ] PATCH (update item)
-  - [ ] DELETE (delete item)
-  - [ ] Routes follow proper naming conventions
-- [ ] The app includes the ability to reset the database to its default state — **4 pts** — *Feature 6 · Owner: Parth Patel*
-- [ ] The project includes at least one redirection — **3 pts** — *Feature 3 · Owner: Tasneem Shabana*
-- [ ] The project includes at least one same-page interaction — **3 pts** — *Features 1 & 2 · George Liu / Hunter Smith*
-- [ ] The project includes dynamic frontend routes created with React Router — **4 pts** — *Features 1, 3, 5, 6*
-- [ ] The app includes hierarchically designed React components — **6 pts** — *Feature 5 · Owner: Robert Cunningham*
-  - [ ] Components broken into page and component types
-  - [ ] Corresponding container and presenter components
-- [ ] The project is deployed on Render with all pages and features working — **8 pts** — *All features*
+- [x] The project includes an Express backend app and a React frontend app — **5 pts** — *All features*
+- [x] The project includes dynamic routes for both frontend and backend apps — **3 pts** — *Features 1, 3, 5, 6*
+- [x] The project includes at least one of each DB relationship:
+  - [x] one-to-many — **part of 8 pts** — *Feature 5 (deck → words) · Owner: Robert Cunningham*
+  - [x] many-to-many with a join table — **part of 8 pts** — *Feature 4 (users ↔ words) · Owner: Tasneem Shabana*
+- [x] The project includes a well-designed RESTful API — **15 pts** — *Feature 5 satisfies all four verbs*
+  - [x] GET (view items)
+  - [x] POST (create item)
+  - [x] PATCH (update item)
+  - [x] DELETE (delete item)
+  - [x] Routes follow proper naming conventions
+- [x] The app includes the ability to reset the database to its default state — **4 pts** — *Feature 6 · Owner: Parth Patel*
+- [x] The project includes at least one redirection — **3 pts** — *Feature 3 · Owner: Tasneem Shabana*
+- [x] The project includes at least one same-page interaction — **3 pts** — *Features 1 & 2 · George Liu / Hunter Smith*
+- [x] The project includes dynamic frontend routes created with React Router — **4 pts** — *Features 1, 3, 5, 6*
+- [x] The app includes hierarchically designed React components — **6 pts** — *Feature 5 · Owner: Robert Cunningham*
+  - [x] Components broken into page and component types
+  - [x] Corresponding container and presenter components
+- [x] The project is deployed on Render with all pages and features working — **8 pts** — *All features*
 
 ### Custom Required Features — must complete at least 2 (3 pts each, all-or-nothing)
 
-- [ ] The project gracefully handles errors — **3 pts** — *Feature 7 · Owner: All / Parth coordinates*
-- [ ] The project includes a slide-out pane or modal — **3 pts** — *Feature 2 · Owner: Hunter Smith*
-- [ ] The project includes a unique field within the join table — **3 pts** — *Feature 4 · Owner: Tasneem Shabana*
-- [ ] The project allows filtering and/or sorting — **3 pts** — *Feature 6 · Owner: Parth Patel*
-- [ ] Data is automatically generated in response to a certain event or user action — **3 pts** — *Feature 4 · Owner: Tasneem Shabana*
-- [ ] Data submitted via POST or PATCH is validated before the database is updated — **3 pts** — *Feature 5 · Owner: Robert Cunningham*
-- [ ] *(optional)* The project includes a one-to-one database relationship — **3 pts**
-- [ ] *(optional)* The project includes a custom non-RESTful route — **3 pts**
+- [x] The project gracefully handles errors — **3 pts** — *Feature 7 · Owner: All / Parth coordinates*
+- [x] The project includes a slide-out pane or modal — **3 pts** — *Feature 2 · Owner: Hunter Smith*
+- [x] The project includes a unique field within the join table — **3 pts** — *Feature 4 · Owner: Tasneem Shabana*
+- [x] The project allows filtering and/or sorting — **3 pts** — *Feature 6 · Owner: Parth Patel*
+- [x] Data is automatically generated in response to a certain event or user action — **3 pts** — *Feature 4 · Owner: Tasneem Shabana*
+- [x] Data submitted via POST or PATCH is validated before the database is updated — **3 pts** — *Feature 5 · Owner: Robert Cunningham*
+- [x] *(optional)* The project includes a one-to-one database relationship — **3 pts**
+- [x] *(optional)* The project includes a custom non-RESTful route — **3 pts**
 
 ### Stretch Features — optional bonus points
 
-- [ ] A subset of pages require the user to log in before accessing the content — **3 pts** — *Feature 8 · Owner: Parth Patel*
-- [ ] Show a spinner while a page or page element is loading — **2 pts** — *Feature 9 · Owner: Hunter Smith*
-- [ ] Disable buttons and inputs during the form submission process — **2 pts** — *Feature 9 · Owner: Hunter Smith*
-- [ ] Toast messages deliver simple feedback in response to user events — **3 pts** — *Feature 10 · Owner: Robert Cunningham*
-- [ ] *(optional)* Restrict available user options dynamically — **3 pts**
-- [ ] *(optional)* Disable buttons after they have been clicked — **2 pts**
-- [ ] *(optional)* Users can upload images stored on a cloud service — **4 pts**
+- [x] A subset of pages require the user to log in before accessing the content — **3 pts** — *Feature 8 · Owner: Parth Patel*
+- [x] Show a spinner while a page or page element is loading — **2 pts** — *Feature 9 · Owner: Hunter Smith*
+- [x] Disable buttons and inputs during the form submission process — **2 pts** — *Feature 9 · Owner: Hunter Smith*
+- [x] Toast messages deliver simple feedback in response to user events — **3 pts** — *Feature 10 · Owner: Robert Cunningham*
+- [x] *(optional)* Restrict available user options dynamically — **3 pts**
+- [x] *(optional)* Disable buttons after they have been clicked — **2 pts**
+- [x] *(optional)* Users can upload images stored on a cloud service — **4 pts**
